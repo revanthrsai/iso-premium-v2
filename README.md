@@ -25,23 +25,4 @@ assets/js/ui.js         detail panel, explorer/glossary rendering, theme toggle
 assets/js/preloader.js  one-time intro animation
 ```
 
-## Adding content
-
-All message and glossary data lives in `assets/js/data.js`, in the `DATA` object. Add an entry there and it shows up automatically — no other files need to change.
-
-```javascript
-{
-    code: 'CAMT.055',
-    family: 'CAMT',
-    title: 'CAMT.055',
-    subtitle: 'Your Title Here',
-    purpose: 'What this message does...',
-    direction: 'Bank → Customer',
-    category: 'Cash Management',
-    useCases: ['Use Case 1', 'Use Case 2'],
-    fields: ['Field1 (Description)', 'Field2'],
-    example: '<Document>...</Document>'
-}
-```
-
-Theme colors live in `assets/css/style.css` under `:root`.
+This repo is still under development, please feel free to reach out to me for the updates on this if you like it !
