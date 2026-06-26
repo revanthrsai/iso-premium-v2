@@ -19,8 +19,9 @@ files it touches, and a "Definition of Done" so any session can pick up cleanly.
 - ✅ **Phase 0** — Freeze rule acknowledged.
 - ✅ **Phase 1** — `PHILOSOPHY.md` written (5 answers + 9-beat Lesson Spine + acceptance test + Bob & Sweety canon).
 - ✅ **Phase 2** — `assets/js/knowledge-nodes.js` created: node schema + IA layers + helpers + **Foundations** and **Payments** fully built and passing the self-check. Additive, nothing rendered yet — app runs unchanged.
-- ⬜ **Phase 3** — Foundations semantic-first (next).
-- ⬜ Phases 4–10 — pending.
+- ✅ **Phase 3** — Foundations renders **semantic-first**. `ui.js` gains `renderKnowledgeLesson()` (strict 9-beat order, XML only at beat 7), gated by `KNOWLEDGE_LESSON_IDS` (currently `['foundations']`); `loadLessonModule()` branches to it; `index.html` loads `knowledge-nodes.js`. Reuses existing CSS only — no new styles. Verified: beat order correct, XML after the semantic model.
+- ⬜ **Phase 4** — History as story (next).
+- ⬜ Phases 5–10 — pending. (Phase 5 expands `KNOWLEDGE_LESSON_IDS` to the five domains.)
 
 > **To commit Phase 2:** add `<script src="assets/js/knowledge-nodes.js"></script>`
 > to `index.html` after `data.js` and before `ui.js`. (Optional until Phase 3 —

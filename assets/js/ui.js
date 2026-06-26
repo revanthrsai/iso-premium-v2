@@ -489,6 +489,170 @@ function renderMessageSpotlight(spotlight) {
     `;
 }
 
+// ---------------------------------------------------------------------------
+// Phase 3 — Knowledge-node lessons (semantic-first).
+// When a chapter has a node in `knowledgeNodes` (knowledge-nodes.js), render it
+// in strict 9-beat Lesson Spine order (PHILOSOPHY.md): the HUMAN QUESTION first,
+// the raw XML only at beat 7. Reuses existing lesson CSS classes -- no new
+// styles. Gated by KNOWLEDGE_LESSON_IDS so nodes roll in one phase at a time:
+//   Phase 3 -> foundations;  Phase 5 adds the five domains;  etc.
+// ---------------------------------------------------------------------------
+const KNOWLEDGE_LESSON_IDS = ['foundations'];
+
+function hasKnowledgeLesson(moduleId) {
+    return typeof getKnowledgeNode === 'function'
+        && KNOWLEDGE_LESSON_IDS.indexOf(moduleId) !== -1
+        && !!getKnowledgeNode(moduleId);
+}
+
+// Small reusable rows: a monospace label (concept/tag/role) + a plain meaning.
+// Reuses the existing .spotlight-fields / .spotlight-field styling.
+function renderFieldRows(rows) {
+    return `<div class="spotlight-fields">${rows.map(r => `
+        <div class="spotlight-field">
+            <span class="spotlight-field-tag">${r.tag}</span>
+            <span class="spotlight-field-meaning">${r.meaning}</span>
+        </div>`).join('')}</div>`;
+}
+
+// Stacked labelled cards (who-feels-it, what-breaks). Reuses .lesson-why-*.
+function renderWhyCards(cards) {
+    return `<div class="lesson-why-section">${cards.map(c => `
+        <div class="lesson-why-card ${c.solution ? 'lesson-why-card-solution' : ''}">
+            <div class="lesson-why-label">${c.label}</div>
+            <p class="lesson-why-text">${c.text}</p>
+        </div>`).join('')}</div>`;
+}
+
+function renderKnowledgeLesson(node, mod) {
+    const content = document.getElementById('content');
+    const wp = node.worldProcess || {};
+    const sm = node.semanticModel || {};
+    const xml = node.xml || {};
+
+    // Beat 4 -- participants (icon + role / plain) and the flow as a process map.
+    const participantsHtml = (wp.participants && wp.participants.length)
+        ? renderFieldRows(wp.participants.map(p => ({ tag: `${p.icon || ''} ${p.role}`.trim(), meaning: p.plain })))
+        : '';
+    const flowHtml = (wp.flow && wp.flow.length) ? `
+        <div class="process-map">
+            <div class="process-map-flow" data-flow>
+                ${wp.flow.map((step, i) => `${i > 0 ? '<span class="process-map-arrow">→</span>' : ''}<span class="process-map-step">${step}</span>`).join('')}
+            </div>
+        </div>` : '';
+
+    // Beat 5 -- semantic roles as CONCEPTS (still no tags).
+    const rolesHtml = (sm.roles && sm.roles.length)
+        ? renderFieldRows(sm.roles.map(r => ({ tag: r.concept, meaning: r.plain })))
+        : '';
+
+    // Beat 6 -- the messages, named in business terms first.
+    const msgsHtml = (node.messages && node.messages.length) ? `
+        <div class="lesson-process-section">
+            <div class="journey-eyebrow">The Messages</div>
+            ${renderFieldRows(node.messages.map(m => ({ tag: m.code, meaning: `<strong>${m.businessName}</strong> — ${m.plainRole}` })))}
+        </div>` : '';
+
+    // Beat 7 -- tag glossary (each tag translated to plain English on sight).
+    const tagGlossaryHtml = (xml.tagGlossary && xml.tagGlossary.length)
+        ? renderFieldRows(xml.tagGlossary.map(t => ({ tag: t.tag, meaning: t.plain })))
+        : '';
+
+    // Beat 8 -- concrete real failures.
+    const breaksHtml = (node.breaks && node.breaks.length)
+        ? renderWhyCards(node.breaks.map(b => ({ label: b.symptom, text: `<strong>Why:</strong> ${b.cause}<br><strong>Fix:</strong> ${b.fix}` })))
+        : '';
+
+    // Beat 9 -- related ideas as tags (clickable wiring arrives in Phase 7).
+    const relatedTitles = (node.relatedNodes || [])
+        .map(id => (typeof getKnowledgeNode === 'function' ? getKnowledgeNode(id) : null))
+        .filter(Boolean).map(n => n.title);
+    const connectTags = relatedTitles.concat(node.glossaryTerms || []);
+    const relatedHtml = connectTags.length ? `
+        <div class="lesson-process-section">
+            <div class="journey-eyebrow">Where This Connects</div>
+            <div class="tags">${connectTags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+        </div>` : '';
+
+    content.innerHTML = `
+        <div class="page lesson-article">
+            <div class="lesson-panel-top">
+                <button class="btn-back-roadmap" onclick="renderRoadmapView()">← Back to Roadmap</button>
+                ${renderLessonProgress(mod)}
+            </div>
+
+            <div class="lesson-article-header" data-reveal="up">
+                ${renderGlossyIcon(mod.id, 64)}
+                <div class="journey-eyebrow">${mod.name}</div>
+            </div>
+
+            <!-- BEAT 1 — The Human Question -->
+            <div class="journey-eyebrow" data-reveal="up">The Question</div>
+            <h2 class="lesson-title" data-reveal="up">${node.humanQuestion}</h2>
+
+            <!-- BEAT 2 — Who Feels This -->
+            <div class="lesson-process-section">
+                <div class="journey-eyebrow">Who Feels This</div>
+                ${renderWhyCards((node.whoFeelsIt || []).map(w => ({ label: w.who, text: w.pain })))}
+            </div>
+
+            <!-- BEAT 3 — The Story -->
+            <div class="lesson-process-section">
+                <div class="journey-eyebrow">The Story</div>
+                <p class="lesson-story-text" data-reveal="up">${node.story.lead}</p>
+                ${node.story.beats.map((p, i) => `<p class="lesson-story-text" data-reveal="up" data-reveal-delay="${(i + 1) * 70}">${p}</p>`).join('')}
+                ${node.story.castPayoff ? `<div class="lesson-unlocked-skill" data-reveal="up"><strong>Recap.</strong> ${node.story.castPayoff}</div>` : ''}
+            </div>
+
+            <!-- BEAT 4 — How the World Solved It -->
+            <div class="lesson-process-section">
+                <div class="journey-eyebrow">How the World Solved It</div>
+                <p class="lesson-story-text">${wp.summary || ''}</p>
+                ${participantsHtml}
+                ${flowHtml}
+            </div>
+
+            <!-- BEAT 5 — How ISO Models It (concepts, not tags) -->
+            <div class="lesson-process-section">
+                <div class="journey-eyebrow">How ISO Models It</div>
+                <p class="lesson-story-text">${sm.summary || ''}</p>
+                ${rolesHtml}
+            </div>
+
+            <!-- BEAT 6 — The Messages -->
+            ${msgsHtml}
+
+            ${renderVideoFiller(mod.videoFiller, `${mod.name} — scene`)}
+
+            <!-- BEAT 7 — Only now, the XML -->
+            <div class="lesson-spotlight-section">
+                <div class="journey-eyebrow">Only Now — How It's Written</div>
+                <p class="lesson-story-text">${xml.intro || ''}</p>
+                <div class="xml-editor-shell">
+                    <div class="xml-editor-toolbar">
+                        <span class="xml-editor-dot"></span>
+                        <span class="xml-editor-dot"></span>
+                        <span class="xml-editor-dot"></span>
+                        <span class="xml-editor-filename">sample.xml</span>
+                    </div>
+                    <pre class="xml-editor xml-readonly"><code>${escapeHtml(xml.code || '')}</code></pre>
+                </div>
+                ${tagGlossaryHtml}
+            </div>
+
+            <!-- BEAT 8 — What Breaks -->
+            ${breaksHtml ? `<div class="lesson-process-section"><div class="journey-eyebrow">What Breaks</div>${breaksHtml}</div>` : ''}
+
+            <!-- BEAT 9 — You Can Now… -->
+            <div class="lesson-unlocked-skill" data-reveal="up"><strong>Skill unlocked.</strong> ${node.earnedSkill}</div>
+            ${relatedHtml}
+        </div>
+    `;
+
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    if (window.Motion) Motion.scan(content);
+}
+
 function loadLessonModule(moduleId) {
     const mod = learningJourney.find(m => m.id === moduleId);
     if (!mod) return;
@@ -496,6 +660,12 @@ function loadLessonModule(moduleId) {
     // Free-roam: opening a chapter is what marks it "viewed" -- there's no
     // separate verify step gating it anymore.
     ProgressEngine.markComplete(moduleId);
+
+    // Phase 3: chapters with a knowledge node render semantic-first.
+    if (hasKnowledgeLesson(moduleId)) {
+        renderKnowledgeLesson(getKnowledgeNode(moduleId), mod);
+        return;
+    }
 
     const pillar = getPillar(mod.pillarId);
     const content = document.getElementById('content');
