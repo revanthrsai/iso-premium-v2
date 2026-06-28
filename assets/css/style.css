@@ -3993,12 +3993,12 @@ a.link:hover {
     margin-right: calc(var(--content-pad) * -1);
     margin-top: calc(clamp(32px, 5vw, 72px) * -1);
     margin-bottom: clamp(40px, 8vw, 96px);
-    min-height: calc(100svh - 76px);
+    min-height: clamp(320px, 48vh, 560px);
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    padding: clamp(96px, 16vh, 180px) var(--content-pad) clamp(72px, 12vh, 140px);
+    padding: clamp(64px, 12vh, 120px) var(--content-pad) clamp(56px, 9vh, 104px);
     border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
 }
 
@@ -4174,7 +4174,7 @@ body.kinetic-ready .hero-stage .hero-cta { animation-delay: 0.98s; }
 
 /* ---- responsive: adapt, don't just scale -------------------------------- */
 @media (max-width: 900px) {
-    .hero-stage { min-height: calc(100svh - 64px); border-radius: 0 0 var(--radius-xl) var(--radius-xl); }
+    .hero-stage { min-height: clamp(300px, 42vh, 460px); border-radius: 0 0 var(--radius-xl) var(--radius-xl); }
     .hero-net { opacity: 0.6; }
 }
 @media (max-width: 600px) {

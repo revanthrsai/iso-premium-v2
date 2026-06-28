@@ -89,13 +89,6 @@ const PAGES = {
                     <span class="hero-token" style="left:62%; --d:34s; --delay:-25s; --size:14px; --op:.22; --drift:-34px;">MX</span>
                 </div>
 
-                <div class="hero-inner">
-                    <div class="hero-eyebrow hl-line"><span class="hero-eyebrow-dot"></span>Interactive Academy &middot; ISO&nbsp;20022</div>
-                    <div class="hero-cta hl-line">
-                        <button class="btn" onclick="navigate('journey', event)">Start the Journey <span class="btn-arrow">&rarr;</span></button>
-                        <button class="btn btn-ghost" onclick="window.scrollTo({top: (document.querySelector('.story-section')||{}).offsetTop - 60, behavior:'smooth'})">Explore the story</button>
-                    </div>
-                </div>
             </section>
 
             <section class="story-section reveal-section">
@@ -141,41 +134,6 @@ const PAGES = {
                     and regulator could understand.
                 </p>
             </section>
-
-            <section class="story-section reveal-section">
-                <p class="pullquote" data-reveal="blur">&ldquo;Imagine a world that never learned to speak the same financial language.&rdquo;</p>
-            </section>
-
-            <div class="history-cinematic-break cinematic-scene reveal-section" id="history-cinematic-break">
-                <div class="cinematic-flow" aria-hidden="true">
-                    <span class="cinematic-node">London</span>
-                    <span class="cinematic-wire"><i class="cinematic-pulse"></i></span>
-                    <span class="cinematic-node">New York</span>
-                    <span class="cinematic-wire"><i class="cinematic-pulse" style="animation-delay:1.1s"></i></span>
-                    <span class="cinematic-node">Singapore</span>
-                    <span class="cinematic-wire"><i class="cinematic-pulse" style="animation-delay:2.2s"></i></span>
-                    <span class="cinematic-node">Mumbai</span>
-                </div>
-
-                <figure class="cinematic-video is-loading" id="cinematic-video">
-                    <video class="cinematic-video-el" id="history-break-video"
-                           muted loop playsinline preload="metadata" disablepictureinpicture
-                           poster="assets/video/iso-history-poster.jpg"
-                           data-src="assets/video/iso-history.mp4"></video>
-                    <div class="cinematic-video-tint" aria-hidden="true"></div>
-                    <div class="cinematic-video-vignette" aria-hidden="true"></div>
-                    <div class="cinematic-video-feather" aria-hidden="true"></div>
-                    <div class="cinematic-video-fallback" aria-hidden="true">
-                        <span class="cinematic-fallback-pulse"></span>
-                        <span class="cinematic-slot-note">Cinematic footage appears here once <code>assets/video/iso-history.mp4</code> is added</span>
-                    </div>
-                </figure>
-
-                <div class="cinematic-caption">
-                    <div class="eyebrow eyebrow-center">Establishing shot</div>
-                    <p>Money moving across the world, in real time.</p>
-                </div>
-            </div>
 
             <div class="scrub-intro" data-reveal="up">
                 <div class="eyebrow eyebrow-center">The longer story</div>
@@ -234,27 +192,12 @@ const PAGES = {
                     </div>
                 </div>
             </div>
-
-            <section class="story-section reveal-section">
-                <div class="story-year" data-reveal="fade">Today</div>
-                <h2 data-reveal="up">You've seen how we got here.<br>Now see how it <span class="gradient-text">runs today.</span></h2>
-                <p class="pullquote" data-reveal="blur" style="margin-top:24px;">&ldquo;2004 gave the industry one shared language. Below, that language is organized into the core domains running the world's financial system right now.&rdquo;</p>
-                <div data-reveal="up" data-reveal-delay="160" style="margin-top:36px;">
-                    <button class="btn" data-magnetic onclick="navigate('journey', event)">Start the Learning Journey <span class="btn-arrow">&rarr;</span></button>
-                </div>
-            </section>
-
         </div>
 
         <div class="scroll-cue" id="scroll-cue">
             <span class="scroll-cue-label">Scroll</span>
             <span class="scroll-cue-chevron">&#8595;</span>
         </div>
-    `,
-    // Non-nav deep route: retired from the global nav in 1.3 (disposition c),
-    // still reachable via in-page CTAs. Roadmap rendered by renderRoadmapView().
-    journey: `
-        <!-- Roadmap pipeline, or the split-screen lesson once a pillar is opened, is rendered by renderRoadmapView() / loadLessonModule() in ui.js -->
     `,
     library: `
         <div class="page"><div id="learn-root"><!-- renderArticleIndex() fills this --></div></div>
@@ -319,9 +262,7 @@ function navigate(page, evt) {
     content.innerHTML = PAGES[page];
 
     // Run page-specific initialization
-    if (page === 'journey') {
-        renderRoadmapView();
-    } else if (page === 'glossary') {
+    if (page === 'glossary') {
         renderGlossary();
     } else if (page === 'playground') {
         initPlayground();
@@ -332,94 +273,11 @@ function navigate(page, evt) {
         initRevealAnimations();
         initStatCounters();
         initScrollCue();
-        initBackgroundVideos();
+        renderHistoryChapterIndex();
     }
 
     // Hand the freshly-rendered subtree to the shared motion engine.
     if (window.Motion) Motion.scan(content);
-}
-
-// Full-bleed background video (mid-page cinematic break): plays only while
-// the section is actually on screen, starting once the user scrolls it into
-// view and pausing once scrolled past -- no need for a separate timer-based
-// fade.
-// Cinematic establishing-shot video. Loads lazily from data-src, blends into
-// the page (the fallback CSS scene shows until/unless the file is available),
-// plays only while in view, and respects reduced-motion (first frame, no
-// autoplay). If the file is missing, the layout is untouched — the ambient
-// fallback scene simply remains.
-function initBackgroundVideos() {
-    const figure = document.getElementById('cinematic-video');
-    const video = document.getElementById('history-break-video');
-    if (!figure || !video) return;
-
-    const reduce = window.matchMedia &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // Wire the source from data-src (kept off `src` so nothing fetches until
-    // we decide to). preload="metadata" so only headers/first frame load now.
-    const src = video.getAttribute('data-src');
-    if (src && !video.src) video.src = src;
-
-    let ready = false;
-
-    function markReady() {
-        if (ready) return;
-        ready = true;
-        figure.classList.remove('is-loading');
-        figure.classList.add('has-video');     // fades the real video in over the fallback
-    }
-    function markFailed() {
-        // File missing/unsupported — keep the graceful fallback scene.
-        figure.classList.remove('has-video');
-        figure.classList.add('is-loading', 'no-video');
-    }
-
-    // A frame is available to show.
-    video.addEventListener('loadeddata', markReady, { once: true });
-    video.addEventListener('canplay', markReady, { once: true });
-    // Missing file or decode failure → fallback.
-    video.addEventListener('error', markFailed, { once: true });
-    video.addEventListener('stalled', () => { if (!ready) markFailed(); });
-
-    if (reduce) {
-        // Reduced motion: show the first frame, never autoplay.
-        video.removeAttribute('loop');
-        video.addEventListener('loadeddata', () => {
-            try { video.currentTime = 0.05; } catch (e) {}
-            video.pause();
-        }, { once: true });
-        video.load();
-        return;
-    }
-
-    // Play only while the establishing shot is on screen.
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                if (ready) figure.classList.add('is-revealed');
-                video.play().catch(() => {});
-            } else {
-                video.pause();
-            }
-        });
-    }, { threshold: 0.3 });
-    observer.observe(figure);
-
-    // Reveal the figure when it enters view even before the video is ready
-    // (the fallback scene gets the same gentle fade-in / scale settle).
-    const revealObs = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('is-revealed');
-                revealObs.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.25 });
-    revealObs.observe(figure);
-
-    // Kick off the load.
-    video.load();
 }
 
 // Scroll cue: a bouncing "scroll" hint pinned to the bottom of the
@@ -473,23 +331,46 @@ function initScrubTimeline() {
         if (pinProgress) pinProgress.style.width = `${((idx + 1) / total) * 100}%`;
     }
 
-    const observer = new IntersectionObserver((items) => {
-        items.forEach(item => {
-            if (item.isIntersecting) {
-                setActive(item.target);
-            }
-        });
-    }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+    // Drive the focused entry from scroll position: the active (unblurred)
+    // entry is always the one whose vertical center sits closest to the
+    // viewport center, so the in-focus copy and the pinned year stay in sync
+    // with what the reader is actually looking at.
+    let raf = 0;
+    let currentIdx = -1;
+    function pick() {
+        raf = 0;
+        const mid = window.innerHeight / 2;
+        let bestIdx = 0, bestDist = Infinity;
+        for (let i = 0; i < entries.length; i++) {
+            const r = entries[i].getBoundingClientRect();
+            const dist = Math.abs((r.top + r.bottom) / 2 - mid);
+            if (dist < bestDist) { bestDist = dist; bestIdx = i; }
+        }
+        if (bestIdx !== currentIdx) {
+            currentIdx = bestIdx;
+            setActive(entries[bestIdx]);
+        }
+    }
+    function onScroll() {
+        if (!raf) raf = requestAnimationFrame(pick);
+    }
+    // Replace any listener left by a previous History mount (avoids stacking
+    // handlers that reference detached entries across navigations).
+    if (window.__scrubOnScroll) {
+        window.removeEventListener('scroll', window.__scrubOnScroll);
+        window.removeEventListener('resize', window.__scrubOnScroll);
+    }
+    window.__scrubOnScroll = onScroll;
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
 
-    entries.forEach(el => observer.observe(el));
-
-    // Make sure the first entry is active immediately on load.
-    setActive(entries[0]);
+    // Focus whatever is nearest the viewport center on load.
+    pick();
 }
 
 // Initialize on load
 window.addEventListener('DOMContentLoaded', () => {
-    navigate('history');
+    routeOnLoad();
     initHeaderAutoHide();
     initNavIndicator();
 });
@@ -616,6 +497,319 @@ function initStatCounters() {
     } else {
         document.addEventListener('iso:intro-done', run, { once: true });
     }
+}
+
+// ===========================================================================
+// Phase 2 · History chapters  (Session 2.1)
+// ---------------------------------------------------------------------------
+// PAGES.history is the opening scene; this module appends a chapter index to it
+// and renders each chapter as a long-form reading view into #content, routed at
+// #/history/<chapter-slug> (route scheme finalized in 1.3, NAVIGATION.md §3), so
+// a chapter is shareable and survives reload. Chapters read in order via the
+// shared `pager` control (added 1.4). Authored this session: chapters 01-02.
+// Chapters 03-05 are `status:'soon'` placeholders for 2.2/2.3 — listed in the
+// index, not yet routable. All views reuse existing reading-surface styles
+// (.article-page / .md-body / .article-earned / .pager); no new CSS this session.
+// ===========================================================================
+
+const HISTORY_CHAPTERS = [
+  {
+    num: '01', slug: 'evolution-of-payments', status: 'ready', minutes: 7,
+    title: 'The Evolution of Payments',
+    hook: 'Hand cash to someone standing in front of you and the payment is finished before you let go. Send the same amount to someone you will never meet, on the other side of the world, and it still has to arrive — and you both have to know that it did. How?',
+    summary: 'Money stopped being a thing you move and became information you describe. Coins, ledgers, the telegraph — five thousand years of pulling value and its proof apart, and why the description matters as much as the money.',
+    earned: 'You can now explain why a modern payment is really a piece of information about value — and why moving that information cleanly, with the right who-pays-whom intact, matters every bit as much as moving the money.',
+    body: `<blockquote><p>Hand cash to someone standing in front of you and the payment is finished before you let go. Send the same amount to someone you will never meet, in a country you have never been to, and it still has to arrive — and you both have to <strong>know</strong> that it did. Everything in this academy sits downstream of that one problem.</p></blockquote>
+
+<p>For most of human history, paying someone meant handing them a thing. A coin. A sack of grain. A bar of metal whose weight you could feel in your hand. Value and the proof of value were the same object, in the same place, and trust was easy because you could see it.</p>
+
+<p>The whole story of payments is the story of pulling those two apart — the value, and the information about the value — and learning to move the information faster, further, and more reliably than the thing itself could ever travel.</p>
+
+<h2>First, value travelled as a thing</h2>
+<p>A merchant in the ancient world settled a debt by moving the metal. To pay someone three towns away, somebody had to carry the coins down the road, past the bandits, and put them in the right hands. The money <em>was</em> the cargo. Lose the cargo and you lost the payment, with nothing left to prove it had ever existed.</p>
+
+<h2>Then it became a promise</h2>
+<p>Long before banks, traders worked out that you did not actually have to move the metal at all. If one merchant owed a second, and the second owed a third, a few strokes in a ledger could cancel the whole chain without a single coin changing hands. The written record had quietly become the payment.</p>
+<p>In 1494 a Venetian friar wrote down the method merchants had used for generations — every amount recorded twice, what comes in set against what goes out, so the books could not hide a mistake. <strong>Double-entry bookkeeping</strong> turned money into something you could audit. Centuries later, the paper notes handed out by goldsmiths turned that same trust into something you could fold into a pocket. The promise had become the money.</p>
+
+<h2>Then it learned to travel without the thing</h2>
+<p>In 1871 a bank could, for the first time, move money faster than a horse could carry it. The telegraph split the information clean away from the object: instead of shipping cash, a bank sent an <strong>authenticated instruction</strong> — pay this person, this amount, on our word — and trusted the bank at the other end to act on it. The telex inherited that job for the next hundred years. The money never moved. Only the instruction did.</p>
+<p>This is the quiet turning point the rest of this story depends on. From here on, a payment is not a thing that travels. <em>A payment is a piece of information about value, moving between people who trust the system enough to act on it.</em></p>
+
+<h2>Every payment is the same three questions</h2>
+<p>Strip away the centuries and every payment ever made asks the same three things: <strong>who is paying, who is being paid, and who carries the value between them.</strong> A coin handed across a table answers all three at once — you, them, nobody in between. A transfer between continents answers them across a chain of institutions, each one standing in for that handshake.</p>
+<p>The harder the payment, the more those answers have to be written down, passed along, and understood identically by everyone who touches them. Get the information right and the money follows. Garble it and the money stalls — or lands in the wrong place.</p>
+
+<h2>What that looks like today</h2>
+<p>A worker in one country sends four hundred dollars home to her family in another. On her phone it takes one tap and looks instant. Underneath, that payment crosses two currencies and passes through three banks, none of which has ever met her — and each one has to be told, precisely and unambiguously, who is paying, who is being paid, how much, and what it is for.</p>
+<p>Not one of those banks moves a physical thing. They move <em>information</em>, and settle up between themselves afterwards. The entire job — the job five thousand years of this story has been building toward — is making sure that information arrives complete, in a form every institution reads the same way.</p>
+
+<p class="pullquote" style="margin:36px 0;">&ldquo;Money stopped being something you move. It became something you describe — and the description has to survive the journey.&rdquo;</p>
+
+<p>That is what the rest of this history is really about: not how to move money, but how to describe it so well that it never gets lost in translation. The next chapter is about the first time the whole industry tried to agree on that description — and the network they built to carry it.</p>`
+  },
+  {
+    num: '02', slug: 'swift-and-mt-messages', status: 'ready', minutes: 8,
+    title: 'SWIFT and the MT Message',
+    hook: 'For most of the last century, moving money between two banks meant a person typing the instruction out by hand and trusting that the bank at the other end would read it exactly the same way. What finally got hundreds of rival banks, in dozens of countries, to agree on one way of saying “pay this”?',
+    summary: 'How two hundred and thirty-nine rival banks agreed on one way to say “pay this” — the secure network and the MT103 that moved the world’s money for a generation, and the tiny fixed field that started breaking it.',
+    earned: 'You can now explain what SWIFT actually is — a shared secure network and a single message format — why getting rival banks to agree on it was a genuine breakthrough, and how a format built for the telex age started breaking the moment a payment needed to carry more than a few fixed characters.',
+    body: `<blockquote><p>For most of the last century, moving money between two banks meant a person typing the instruction out by hand and trusting that the bank at the other end would read it exactly the same way. What finally got hundreds of rival banks, in dozens of countries, to agree on one way of saying <strong>&ldquo;pay this&rdquo;</strong>?</p></blockquote>
+
+<p>By the middle of the twentieth century, banks could already send payment instructions to one another electronically. The trouble was <em>how</em>. The workhorse was the telex — a machine that sent typed messages down a phone line — and every bank wrote its instructions a little differently.</p>
+
+<h2>The age of typing it out by hand</h2>
+<p>A telex payment was a paragraph of free text, composed by a clerk and read by another clerk at the far end. There was no fixed shape to it. One bank’s &ldquo;beneficiary&rdquo; was another bank’s &ldquo;payee&rdquo; was a third’s &ldquo;in favour of.&rdquo; To prove a message was genuine, the two banks shared a secret <strong>test key</strong> — a number worked out by hand from the amount and the date — because otherwise anyone could type a convincing fake.</p>
+<p>It was slow. It was easy to get wrong. And it did not scale: every new banking relationship meant another pair of clerks learning to read each other’s habits. As cross-border trade exploded, the typing could not keep up.</p>
+
+<h2>The agreement that became a network</h2>
+<p>In 1973, two hundred and thirty-nine banks from fifteen countries did something rival institutions almost never do: they agreed on a shared standard, together, and built a cooperative to run it. They named it the Society for Worldwide Interbank Financial Telecommunication — <strong>SWIFT</strong>. By 1977 the first live messages were moving across it.</p>
+<p>SWIFT was two things at once. It was a <strong>secure network</strong>, so banks no longer leaned on a hand-worked test key — the network itself vouched for the message. And it was a single <strong>message format</strong>, so &ldquo;pay this&rdquo; finally looked the same whether it left Frankfurt, São Paulo, or Singapore. For the first time, a machine could read a payment instruction without a clerk in the loop.</p>
+
+<h2>The message with a number for a name</h2>
+<p>SWIFT’s messages were built from numbered fields, each with one fixed job, grouped into types. Bankers stopped describing a payment in prose and started filling in the same labelled boxes every time. Each message type got a number — and the one that carried a customer’s money from one bank to another, across borders, was the <strong>MT103</strong>.</p>
+<p>If you sent money overseas at any point in the last forty years, an MT103 almost certainly carried it. It named the payer, the payee, the banks in between, the amount, and a line for what the payment was for. For a generation, this was how the world moved money. It worked, at enormous scale, for decades.</p>
+
+<h2>The crack already built into it</h2>
+<p>But the format had been designed in the telex age, and it carried that age’s biggest limitation: the fields were <strong>small and fixed</strong>. The box for a name was capped at thirty-five characters. A long company name, a name with an address attached, a name in a script that needed more room — all of it got <em>truncated</em>, chopped off at the edge of the box.</p>
+<p>On a domestic payment that was an annoyance. On a cross-border payment it was dangerous. Every international payment is screened against sanctions lists, and that screening matches on names. Chop a name in half and the screen can flag the wrong person entirely — or wave through someone it should have stopped. A format built to save space had started quietly breaking the one check a cross-border payment cannot afford to get wrong.</p>
+
+<p class="pullquote" style="margin:36px 0;">&ldquo;The breakthrough and the flaw were the same decision: pack a payment into a handful of tiny, fixed boxes, and make the whole world fill them in the same way.&rdquo;</p>
+
+<p>SWIFT solved the problem this chapter opened with — it got the world to agree on one way to say &ldquo;pay this.&rdquo; But the agreement was frozen in the shape of a 1970s machine, and money was about to start asking it to carry far more than a few fixed characters. The next chapter is about everything that shape could not hold.</p>`
+  },
+  {
+    num: '03', slug: 'problems-with-legacy-standards', status: 'ready', minutes: 8,
+    title: 'Problems with Legacy Standards',
+    hook: 'A payment for a real, law-abiding company gets stopped at a bank it has never dealt with, held for two days, and finally released by a human reading it line by line — all because the company’s name was a few characters too long for the box it had to fit in. Multiply that by millions of payments a day. What does a format quietly running out of room actually cost?',
+    summary: 'The thirty-five-character box, the free-text fields a machine couldn’t read, and the dialects that splintered one standard into many — the real, expensive failures that made patching the old format pointless and a new language unavoidable.',
+    earned: 'You can now name the specific, structural reasons the old message format could not be saved — too little room, too little structure, and too many local dialects — and explain why each one cost real money and could not be fixed by widening a field. You understand why the industry concluded it had to change what a financial message <em>is</em>, not just make the boxes bigger.',
+    body: `<blockquote><p>A payment for a real, law-abiding company gets stopped at a bank it has never dealt with, held for two days, and finally released by a human reading it line by line — all because the company&rsquo;s name was a few characters too long for the box it had to fit in. Multiply that by millions of payments a day. What does a format quietly running out of room actually <strong>cost</strong>?</p></blockquote>
+
+<p>The last chapter ended on a crack: a message format designed in the telex age, built from small, fixed boxes, just as money was starting to ask it to carry far more. This chapter is about what happened when that crack was put under load — billions of payments a day, every one of them squeezed into a shape designed when a name was thirty-five characters and nothing more.</p>
+
+<h2>The box was always too small</h2>
+<p>Start with the limit we already met. A name field capped at thirty-five characters is fine for &ldquo;John Smith&rdquo; and useless for a real corporate payee with a legal name, a trading name, and an address. So the name got <em>chopped</em> — truncated at the edge of the box, or smeared across whatever spare lines a clerk could find.</p>
+<p>That is not a cosmetic problem. Every cross-border payment is screened against sanctions lists, and that screening matches on names. A chopped name can flag an innocent party as a suspected match, freezing a legitimate payment for manual review — or, worse, sail a name past the screen because the part that mattered got cut off. A box built to save space was actively breaking the one check a cross-border payment cannot afford to get wrong.</p>
+
+<h2>The machine could not read what the human wrote</h2>
+<p>The deeper failure was not size — it was <strong>structure</strong>, or the lack of it. Much of what a payment needs to say got dumped into a few lines of free text: what the payment was for, which invoices it settled, the payer&rsquo;s full address. A person could read those lines and understand them. A computer could not.</p>
+<p>So a payment would arrive, the money would land, and the receiving company&rsquo;s system still could not tell <em>which</em> of forty open invoices it had just paid. Someone had to read the remittance line by eye and reconcile it by hand. The information was technically present and practically invisible — written in prose when the world had started running on data.</p>
+
+<h2>One standard, splintered into dialects</h2>
+<p>The original promise was a single way to say &ldquo;pay this&rdquo; the whole world over. But because the format could not grow, every market that needed something it lacked bolted on its own workaround — extra codes hidden in a free-text field, a local convention for cramming an address somewhere it would fit, a national variant with its own private rules.</p>
+<p>The shared standard quietly fragmented into <em>dialects</em>. A message leaving one country was technically valid and still misread in another, because the two ends had each patched the same gaps in different ways. The one thing the format existed to prevent — banks reading the same instruction differently — had crept back in through the patches.</p>
+
+<h2>The hidden tax nobody chose to pay</h2>
+<p>Every one of these gaps was paid for, just not on any invoice. Banks ran whole departments — <strong>repair desks</strong> — whose job was to catch the payments a machine could not process and fix them by hand. The industry measured its own health by <em>straight-through processing</em>: the share of payments that made it end to end without a human touching them. Every truncated name, every unreadable remittance line, every dialect mismatch was a payment that fell out of automation and onto someone&rsquo;s desk — slower, costlier, and more error-prone with every touch.</p>
+
+<h2>Why you couldn&rsquo;t just make the boxes bigger</h2>
+<p>The obvious fix — widen the name field, add a structured address, leave room for an invoice list — was the one fix that could not be made. The old messages were rigid by design: systems all over the world parsed them by counting characters and trusting that a given field sat in a given place. Make one box bigger and you shift everything after it, breaking every system downstream that expected the old shape.</p>
+<p>The format had no room to grow because growth was the one thing it was built to forbid. You could not evolve it. You could only replace it — and to replace it, the industry first had to admit the problem was never the size of the boxes.</p>
+
+<p class="pullquote" style="margin:36px 0;">&ldquo;The flaw was never that the boxes were too small. It was that a payment had been treated as text to type, when it had become data to process.&rdquo;</p>
+
+<p>That was the realisation that ended the era of patching. The trouble was not a field here or a limit there; it was the whole idea of describing money as a few lines of fixed text. Fixing that meant rethinking what a financial message fundamentally <em>is</em>. The next chapter is about the moment the industry finally did.</p>`
+  },
+  {
+    num: '04', slug: 'birth-of-iso-20022', status: 'ready', minutes: 9,
+    title: 'The Birth of ISO 20022',
+    hook: 'By the early 2000s the industry faced a choice it had spent a decade avoiding: keep patching a message format built for a 1970s machine, or stop, and design the thing properly — once, for everyone, for good. What does it actually look like when an entire industry decides to start over?',
+    summary: 'Not a bigger box but a different idea: separate what a payment means from how it is written down, agree the meaning once in a shared dictionary, and let any message be built from it. The structured answer to every limit the last two chapters named.',
+    earned: 'You can now explain what ISO 20022 actually is — not merely a new message format but a shared way of agreeing what financial information <em>means</em>, kept in a central dictionary and reused everywhere — and you can trace each of its core ideas back to a specific failure of the old standard it was built to fix.',
+    body: `<blockquote><p>By the early 2000s the industry faced a choice it had spent a decade avoiding: keep patching a message format built for a 1970s machine, or stop, and design the thing properly — once, for everyone, for good. What does it actually look like when an entire industry decides to <strong>start over</strong>?</p></blockquote>
+
+<p>Every problem in the last chapter pointed the same way. The truncated name, the remittance no machine could read, the dialects that splintered one standard into many — none of them could be fixed by making a box bigger, because they were all symptoms of the same root cause. A payment had been treated as a few lines of text to type, when it had long since become structured data to process. So in 2004 the industry stopped patching the text and published something different in kind: <strong>ISO 20022</strong>.</p>
+
+<h2>Fix the meaning, not the syntax</h2>
+<p>The breakthrough was an idea so simple it is easy to miss. Pull apart two things the old standard had welded together: <em>what a payment means</em>, and <em>how it is written down</em>.</p>
+<p>The old format fused them — the meaning of a field <em>was</em> its position and length in the message. Change the writing and you changed the meaning; you couldn&rsquo;t touch one without breaking the other. ISO 20022 separates them. First the industry agrees, in plain business terms, what a payment <em>is</em> — a debtor, a creditor, an amount, a purpose, a structured address. Only then is that meaning written down. Get the meaning right once, and the way it&rsquo;s written can change without the meaning shifting underneath it.</p>
+
+<h2>A shared dictionary before a single message</h2>
+<p>So ISO 20022 is not, at heart, a message. It is a <strong>dictionary</strong>. Every concept finance uses — a party, an account, an amount, a date, a purpose — is defined once, precisely, in a central repository everyone draws from. A &ldquo;creditor&rdquo; means the same thing in a payment, a securities trade, and a direct debit, because all three reach for the same definition in the same shared book.</p>
+<p>This is the direct answer to the dialects of the last chapter. When everyone builds from one agreed dictionary, a message leaving one country means exactly what it means arriving in another — not because the two ends patched the gaps the same way by luck, but because there were no gaps to patch.</p>
+
+<h2>A recipe for messages, not one message</h2>
+<p>Because it starts from shared definitions, ISO 20022 is really a <em>method</em> for building messages, not a single message format. The same dictionary that describes a customer credit transfer also describes a bank-to-bank settlement, a securities trade, a card transaction, a cash-management report. One way of working, spanning the whole financial industry — where the old standard had really only ever been about payments.</p>
+<p>That is why the messages have those structured family names — <strong>pacs</strong>, <strong>pain</strong>, <strong>camt</strong> and the rest. Each name is not an arbitrary code but an address into the dictionary: a family, a function, a version. Later chapters in the Library take each family apart; here, the point is only that they all descend from one shared model rather than a pile of separate formats.</p>
+
+<h2>Finally, room to say what you mean</h2>
+<p>Everything the old format could not hold, ISO 20022 makes a first-class citizen. A name has room to be a full legal name. An address is <em>structured</em> — street, town, country in their own labelled fields — instead of smeared across free text. The reason for a payment is a defined purpose, not a hopeful note. The invoices being settled are listed as data a machine can read and reconcile on its own.</p>
+<p>Written out, a single payment becomes far longer and more verbose than its terse predecessor — and that verbosity is the entire point. Every piece of meaning is labelled and in its own place, so a computer at the far end can read it without a clerk translating. The richness the old repair desks supplied by hand is now carried inside the message itself.</p>
+
+<h2>A standard that is allowed to grow</h2>
+<p>And because meaning and writing are separate, the standard can finally <em>evolve</em>. New needs are added to the dictionary and new versions of a message published, in the open, through a governed central registry — without shattering everything downstream the way widening a fixed box once did. The frozen format that could only be replaced was succeeded by a living one designed to change. That is not a footnote; it is the property the old world lacked most.</p>
+
+<p class="pullquote" style="margin:36px 0;">&ldquo;ISO 20022 was never a bigger box. It was the decision to agree what money <em>means</em> before arguing about how to write it down.&rdquo;</p>
+
+<p>So ISO 20022 is best understood not as a new file to send, but as a shared language with a shared dictionary behind it — the structured answer to every limit the last two chapters laid out. Inventing the language, though, is not the same as the world actually speaking it. The final chapter of this history is about the slow, deadline-driven migration of the entire planet&rsquo;s payments onto it — and why, after twenty years, the moment finally arrived.</p>`
+  },
+  {
+    num: '05', slug: 'global-migration-timeline', status: 'ready', minutes: 9,
+    title: 'The Global Migration Timeline',
+    hook: 'A finished language can sit on a shelf for twenty years and change nothing — because a language only works when the person on the other end speaks it too. So how do you get every bank, every market, and every central system on the planet to start speaking the same one, all at roughly the same time?',
+    summary: 'Inventing the language was the easy part; getting the whole world to speak it took two decades and a wall of hard deadlines. Why a standard is worthless until everyone adopts it, how the migration rolled out market by market, and why the cutover finally became unavoidable.',
+    earned: 'You can now explain why a finished standard still took twenty years to take hold — the network effect that leaves a payment language worthless until everyone speaks it — and you can trace how the migration actually happened: the systems born fluent, the coordinated cutover of the world’s big payment infrastructures, and why running two languages at once eventually cost more than switching to one.',
+    body: `<blockquote><p>A finished language can sit on a shelf for twenty years and change nothing — because a language only works when the person on the other end speaks it too. So how do you get every bank, every market, and every central system on the planet to start speaking the same one, all at roughly the same <strong>time</strong>?</p></blockquote>
+
+<p>The last chapter ended with a language invented: a shared dictionary, structured meaning, room to say what a payment actually is. But inventing a language and getting the world to speak it are not the same act. The dictionary was published in 2004. For most of the next decade, almost nothing visibly changed — and that gap, between a standard existing and a standard being <em>used</em>, is the whole subject of this final chapter.</p>
+
+<h2>A language nobody else speaks is just noise</h2>
+<p>The reason adoption was slow is the same reason it was always going to be slow: a payment language is worth nothing until the other end speaks it too. If one bank sends a rich, structured message to a bank that can only read the old format, the richness is wasted — or the message bounces. The value of the new standard does not arrive gradually as each bank joins. It arrives all at once, when <strong>enough</strong> of them have joined that you can count on the other end understanding you.</p>
+<p>This is the trap every shared standard sits in. No single bank gains much by going first, and going first is expensive — new systems, retrained staff, years of testing. So for a long time the rational move for everyone was to wait. The language existed; the incentive to actually switch did not.</p>
+
+<h2>The early speakers: systems born fluent</h2>
+<p>The first real momentum came not from old banks converting, but from <em>new</em> systems built fluent in the language from day one. As countries stood up modern instant-payment schemes — money moving between people in seconds, at any hour — they had a blank slate and no legacy format to protect. They simply adopted ISO 20022 as their native tongue from the start.</p>
+<p>That mattered out of proportion to its size. Every system born fluent raised the number of institutions that could already speak the new language, and so lowered the cost — and the risk — for the next one deciding whether to follow. The network was quietly filling up with speakers before the giants had moved at all.</p>
+
+<h2>Then the big infrastructures switched</h2>
+<p>The turning point was the core market infrastructures — the central, high-value settlement systems that whole economies route their largest payments through. Around 2023 the dominoes started to fall together: the eurozone moved its main settlement system onto the standard, the United Kingdom migrated its high-value payment system, and the global cross-border network opened a <strong>coexistence window</strong> in which banks could send either the old format or the new one while everyone finished moving.</p>
+<p>Coexistence sounds gentle, and it is the only safe way to migrate something this critical — you cannot switch the entire planet overnight. But it is also a deliberate trap with a closing date. Running both languages at once is the most expensive state of all: every institution has to maintain two systems, and a payment in the new format still loses its richness the moment it has to be translated down for someone who hasn’t moved. Coexistence is tolerable only because everyone knows it ends.</p>
+
+<h2>The deadline did the work</h2>
+<p>That is why this story is really a story about <em>deadlines</em>. A standard cannot rely on goodwill to cross the finish line, because the laggards have every reason to keep waiting. So the industry did the one thing that breaks the stalemate: it set hard dates and made them stick. The cross-border coexistence window was given a firm end — late 2025 — after which the old format would no longer be accepted for those payments. National infrastructures set their own cutover dates and held them; the United States moved its main high-value system onto the standard in 2025.</p>
+<p>A deadline changes the arithmetic for everyone. The day the end date became real, waiting stopped being the cheap option and became the expensive one — the bank that hadn’t moved was now the bank about to be unable to send a payment. Two decades of rational hesitation collapsed into a few coordinated years, because a date on a calendar finally made going last more costly than going early.</p>
+
+<h2>Why now, and not in 2004</h2>
+<p>So why did the deadlines finally bite, after years of being quietly slipped? Three pressures that weren’t there at the start had converged. The <strong>cost of the old world</strong> had compounded — every repair desk, every truncated name, every reconciliation done by hand was a bill the industry had been paying for decades, and it finally outweighed the cost of changing. <strong>Regulation and compliance</strong> had hardened: sanctions screening depends on complete, structured names and addresses — exactly what the old format mangled and the new one carries cleanly — so richer data stopped being a nicety and became a requirement. And the <strong>technology to handle it</strong> had become cheap: the verbose, structured messages that would have strained a 1970s system are trivial for modern infrastructure to store and process.</p>
+<p>None of those forces existed in 2004. The language had to wait for the world to need it badly enough — and to be able to afford it — before the world would agree, all at once, to speak it.</p>
+
+<p class="pullquote" style="margin:36px 0;">&ldquo;A standard doesn’t win by being better. It wins the day staying on the old one costs more than moving to the new one — and a deadline is how the industry made that day arrive.&rdquo;</p>
+
+<p>And that is where the history closes, and the rest of this academy begins. Five chapters, one continuous problem: value learned to travel as information, the world agreed on one way to write that information down, the first agreement aged into a cage, a richer language was invented to replace it, and — finally, on a deadline — the world actually started speaking it. That language is no longer the future. It is the system running underneath the payment you’ll make today. From here, the Library takes it apart piece by piece, and the Playground lets you work with it directly — because now that you know <em>why</em> it exists, you’re ready to see <em>how</em> it works.</p>`
+  }
+];
+
+function getHistoryChapter(slug){
+    return HISTORY_CHAPTERS.find(function(c){ return c.slug === slug; }) || null;
+}
+
+function historyChapterCardsHtml(){
+    const arrow = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+    return HISTORY_CHAPTERS.map(function(ch){
+        const ready = ch.status === 'ready';
+        const top = ready
+            ? '<span class="learn-card-min">' + ch.minutes + ' min read</span>'
+            : '<span class="learn-card-status">Coming soon</span>';
+        const open = ready ? "openHistoryChapter('" + ch.slug + "')" : '';
+        const handlers = ready
+            ? ' role="button" tabindex="0" onclick="' + open + '" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();' + open + '}"'
+            : ' aria-disabled="true"';
+        return '<article class="learn-card' + (ready ? '' : ' is-draft') + '"' + handlers + '>'
+            + '<div class="learn-card-top"><span class="learn-card-num">' + ch.num + '</span>' + top + '</div>'
+            + '<h4 class="learn-card-title">' + ch.title + '</h4>'
+            + '<p class="learn-card-summary">' + ch.summary + '</p>'
+            + '<div class="learn-card-foot"><div class="learn-tags"><span class="learn-tag">Chapter ' + ch.num + '</span></div>'
+            + (ready ? '<span class="learn-card-go" aria-hidden="true">' + arrow + '</span>' : '')
+            + '</div></article>';
+    }).join('');
+}
+
+// Append the chapter index to the History landing (idempotent). Reuses the
+// existing learn-head + learn-grid + learn-card styling — no new CSS.
+function renderHistoryChapterIndex(){
+    const pageEl = document.querySelector('#content .page');
+    if (!pageEl || document.getElementById('history-chapter-grid')) return;
+    const section = document.createElement('section');
+    section.className = 'reveal-section';
+    section.style.cssText = 'max-width:1180px; margin:clamp(90px,16vw,160px) auto 0;';
+    section.innerHTML =
+        '<div class="learn-head" data-reveal-group>'
+        + '<div class="eyebrow" data-reveal="fade">The History, in chapters</div>'
+        + '<h2 class="section-title" data-reveal="up">Read it as a story, in order.</h2>'
+        + '<p class="section-description" data-reveal="up">Five chapters, each one the consequence of the last — from the first time value had to travel without the thing itself, to the language the world speaks now. Two are ready to read; the rest are landing soon.</p>'
+        + '</div>'
+        + '<div class="learn-grid" style="margin-top:32px;" id="history-chapter-grid">' + historyChapterCardsHtml() + '</div>';
+    pageEl.appendChild(section);
+}
+
+// Build the prev/next reader nav (shared `pager` control, added 1.4).
+function historyPagerHtml(index){
+    const prev = HISTORY_CHAPTERS[index - 1];
+    const next = HISTORY_CHAPTERS[index + 1];
+    function side(ch, dir){
+        const dirLabel = dir === 'prev' ? '← Previous' : 'Next →';
+        const cls = 'pager-link pager-' + dir;
+        if (!ch){
+            const label = dir === 'prev' ? 'You’re at the beginning' : 'More chapters soon';
+            return '<span class="' + cls + ' pager-disabled"><span class="pager-dir">' + dirLabel + '</span><span class="pager-label">' + label + '</span></span>';
+        }
+        if (ch.status !== 'ready'){
+            return '<span class="' + cls + ' pager-disabled"><span class="pager-dir">' + dirLabel + '</span><span class="pager-label">' + ch.title + ' &middot; Coming soon</span></span>';
+        }
+        return '<a class="' + cls + '" href="#/history/' + ch.slug + '" onclick="openHistoryChapter(\'' + ch.slug + '\', event)"><span class="pager-dir">' + dirLabel + '</span><span class="pager-label">' + ch.title + '</span></a>';
+    }
+    return '<nav class="pager" aria-label="History chapters">' + side(prev, 'prev') + side(next, 'next') + '</nav>';
+}
+
+function historyChapterHtml(ch, index){
+    const back = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>';
+    return ''
+        + '<div class="page">'
+        +   '<article class="article-page">'
+        +     '<button class="article-back" onclick="goToHistoryLanding(event)">' + back + ' The History</button>'
+        +     '<header class="article-head">'
+        +       '<div class="article-kicker"><span class="article-level-pill">Chapter ' + ch.num + ' &middot; History</span>'
+        +         '<span class="article-min">' + ch.minutes + ' min read</span></div>'
+        +       '<h1 class="article-title">' + ch.title + '</h1>'
+        +       '<p class="article-standfirst">' + ch.hook + '</p>'
+        +     '</header>'
+        +     '<div class="md-body">' + ch.body + '</div>'
+        +     '<div class="article-earned"><div class="article-earned-badge">You can now</div><p>' + ch.earned + '</p></div>'
+        +     historyPagerHtml(index)
+        +   '</article>'
+        + '</div>';
+}
+
+function renderHistoryChapter(slug){
+    const content = document.getElementById('content');
+    const index = HISTORY_CHAPTERS.findIndex(function(c){ return c.slug === slug; });
+    const ch = HISTORY_CHAPTERS[index];
+    if (!content) return;
+    if (!ch || ch.status !== 'ready'){ navigate('history'); return; }
+
+    closeDetailPanel();
+    window.scrollTo({ top: 0, behavior: 'auto' });
+
+    // Keep History lit in the global nav while reading a chapter.
+    document.querySelectorAll('.nav-item').forEach(function(i){ i.classList.remove('active'); });
+    const hNav = document.querySelector('.nav-item[data-page="history"]');
+    if (hNav) hNav.classList.add('active');
+    if (typeof moveNavIndicator === 'function') moveNavIndicator();
+
+    content.innerHTML = historyChapterHtml(ch, index);
+    initRevealAnimations();
+    if (window.Motion) Motion.scan(content);
+}
+
+// Open a chapter. Drives the URL hash so the view is shareable; the hashchange
+// listener is the single renderer, except on a same-hash re-open (deep link).
+function openHistoryChapter(slug, evt){
+    if (evt) evt.preventDefault();
+    const ch = getHistoryChapter(slug);
+    if (!ch || ch.status !== 'ready') return;
+    const target = '#/history/' + slug;
+    if (location.hash === target) renderHistoryChapter(slug);
+    else location.hash = target;
+}
+
+// Leave a chapter for the History landing. navigate('history') clears the hash.
+function goToHistoryLanding(evt){
+    if (evt) evt.preventDefault();
+    navigate('history');
+}
+
+window.addEventListener('hashchange', function(){
+    const m = location.hash.match(/^#\/history\/([a-z0-9-]+)$/);
+    if (m) renderHistoryChapter(m[1]);
+});
+
+// First paint: honor a deep-linked chapter, otherwise open the History landing.
+function routeOnLoad(){
+    const m = location.hash.match(/^#\/history\/([a-z0-9-]+)$/);
+    const ch = m && getHistoryChapter(m[1]);
+    if (ch && ch.status === 'ready') renderHistoryChapter(m[1]);
+    else navigate('history');
 }
 
 function initRevealAnimations() {
