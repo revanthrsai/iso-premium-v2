@@ -52,6 +52,15 @@
         </div>
 
         <div class="header-right">
+			<div class="nav-arrows" role="group" aria-label="Previous and next section">
+				<button class="nav-arrow" id="nav-prev" onclick="stepNav(-1)" aria-label="Previous section" title="Previous section">
+					<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 L8 12 L15 19"/></svg>
+				</button>
+				<button class="nav-arrow" id="nav-next" onclick="stepNav(1)" aria-label="Next section" title="Next section">
+					<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5 L16 12 L9 19"/></svg>
+				</button>
+			</div>
+
 			<div class="theme-toggle" onclick="toggleTheme()" role="button" aria-label="Toggle theme" tabindex="0">
 				<div class="toggle-thumb"></div>
 			</div>

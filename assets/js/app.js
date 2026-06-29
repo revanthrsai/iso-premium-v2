@@ -240,6 +240,33 @@ const PAGES = {
     `
 };
 
+// Ordered top-level sections, for the prev/next header arrows.
+const NAV_ORDER = ['history', 'library', 'playground', 'glossary'];
+
+// Which section is currently active (falls back to the first).
+function currentNavPage() {
+    const active = document.querySelector('.nav-item.active');
+    const page = active && active.getAttribute('data-page');
+    return NAV_ORDER.includes(page) ? page : NAV_ORDER[0];
+}
+
+// Step one section left (-1) or right (+1) through NAV_ORDER. Clamps at the ends.
+function stepNav(dir) {
+    const i = NAV_ORDER.indexOf(currentNavPage());
+    const next = i + dir;
+    if (next < 0 || next >= NAV_ORDER.length) return;
+    navigate(NAV_ORDER[next]);
+}
+
+// Dim the arrow that would run past either end.
+function updateNavArrows() {
+    const i = NAV_ORDER.indexOf(currentNavPage());
+    const prev = document.getElementById('nav-prev');
+    const next = document.getElementById('nav-next');
+    if (prev) prev.disabled = (i <= 0);
+    if (next) next.disabled = (i >= NAV_ORDER.length - 1);
+}
+
 function navigate(page, evt) {
     const content = document.getElementById('content');
     const navItems = document.querySelectorAll('.nav-item');
@@ -251,6 +278,7 @@ function navigate(page, evt) {
     navItems.forEach(item => item.classList.remove('active'));
     if (triggerEl) triggerEl.classList.add('active');
     moveNavIndicator();
+    updateNavArrows();
 
     // Close detail panel
     closeDetailPanel();
@@ -776,6 +804,7 @@ function renderHistoryChapter(slug){
     const hNav = document.querySelector('.nav-item[data-page="history"]');
     if (hNav) hNav.classList.add('active');
     if (typeof moveNavIndicator === 'function') moveNavIndicator();
+    if (typeof updateNavArrows === 'function') updateNavArrows();
 
     content.innerHTML = historyChapterHtml(ch, index);
     initRevealAnimations();
