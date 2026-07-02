@@ -46,6 +46,8 @@ Same plumbing underneath, opposite direction of the first move. Knowing which on
 
 ## Trace Bob's $400 as pure information
 
+{{flow:One instruction, two ledger edits|Bob ~ Decides to pay Sweety|-> gives an instruction|Bob's bank ~ Debits his balance|-> relays the instruction|Sweety's bank ~ Credits her balance|-> notifies|Sweety ~ Sees the money as hers}}
+
 Watch how little actually "moves":
 
 1. **Bob instructs his bank:** pay Sweety $400. (Information.)
@@ -65,3 +67,7 @@ So when you later meet a message and it looks like an overwhelming form, remembe
 ## So, what can you now do?
 
 You can explain a payment without ever mentioning cash: it's an agreed instruction that edits two ledgers, where the *message* and the *money* are deliberately separate events. Hold onto that separation — the next two articles ([the lifecycle](#) and [clearing vs. settlement](#)) are entirely about the gap between when a payment is *said* and when it's *done*.
+
+{{check:What is a payment, stripped to its essence?|An agreed change to two ledger balances|A physical transfer of banknotes|A message that carries money inside it}}
+
+{{check:Why does a payment need more than just “move the money”?|Everyone involved must agree who pays whom, how much, and when it is final|Banks charge per word, so instructions must be kept short|The receiver has to approve every incoming amount first}}

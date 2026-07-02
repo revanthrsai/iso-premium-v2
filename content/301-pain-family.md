@@ -10,7 +10,7 @@ related: [301-pain-family, 302-pacs-family, 302-pain-001, 103-payment-lifecycle]
 earnedSkill: "Explain what the pain family is for, name pain.001 and pain.002 and what each does, walk the three nested levels of a pain.001, and pinpoint the moment your bank stops speaking pain and starts speaking pacs."
 ---
 
-> **The problem first.** Bob is standing in his kitchen in Dubai with his phone, trying to get ₹33,000 to Sweety in Bangalore. He doesn't have her bank's number. He doesn't speak to her bank. He certainly isn't going to fill in a wire by hand. All he can actually do is tell *his own* bank what he wants. So what does that "telling" look like once it leaves his banking app — and why is it a completely different message from the one his bank sends onward?
+> **The problem first.** Bob is standing in his kitchen in Dubai with his phone, trying to get ₹33,000 to Sweety in Bangalore. He doesn't have her bank's number. He doesn't speak to her bank. He certainly isn't going to fill in a wire by hand. All he can actually do is tell *his own* bank what he wants. So what does that "telling" look like once it leaves his banking app — and why is it completely different from what his bank sends onward?
 
 The answer is the **pain family** — short for **Payments Initiation**. These are the messages a *customer* uses to talk to *their own bank*. Nothing in this family ever travels between two banks. It is the conversation at the very start — and the very end — of a payment, on the customer's side of the counter.
 
@@ -98,3 +98,7 @@ The pain family does the quiet, important work at the edges — taking the reque
 ## So, what can you now do?
 
 You can explain what the pain family is for, name pain.001 and pain.002 and say what each one does, walk the three nested levels of a pain.001 from Group Header down to the transaction, explain why payroll fits so neatly into that nesting, and pinpoint the exact moment your bank stops speaking "pain" and starts speaking "pacs."
+
+{{check:Who talks to whom in the pain family?|A customer and their own bank|Two banks settling with each other|A central bank and a clearing house}}
+
+{{check:Bob instructs his bank to pay Sweety. Which message carries that instruction?|pain.001 — the credit transfer initiation|pacs.008 — the interbank credit transfer|camt.053 — the end-of-day statement}}

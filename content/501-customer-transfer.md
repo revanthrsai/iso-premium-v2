@@ -10,7 +10,7 @@ related: [501-customer-transfer, 305-message-lifecycle, 301-pain-family, 302-pac
 earnedSkill: "Walk a single domestic customer credit transfer end-to-end — naming the pain, pacs, and camt message at each step, the four parties that touch it, and the two references that keep it one payment — and read the whole thing as a sequence rather than a pile of acronyms."
 ---
 
-> **The problem first.** Bob owes Sweety ₹33,000 for Invoice 0042. He opens his banking app, types her account, taps send — and a second later sees a tick. To Bob that was one action. But between his tap and the moment Sweety's accountant ticks the invoice as paid, four institutions exchanged half a dozen messages, money settled across a central system, and two ledgers were rewritten. This is the case study that puts every family you've learned into one motion. What actually happened in that second — and the hours after it?
+> **The problem first.** Bob owes Sweety ₹33,000 for Invoice 0042. He opens his banking app, types her account, taps send — and a second later sees a tick. To Bob that was one action. But between his tap and the moment Sweety's accountant ticks the invoice as paid, four institutions passed half a dozen instructions back and forth, money settled across a central system, and two ledgers were rewritten. This is the case study that puts every family you've learned into one motion. What actually happened in that second — and the hours after it?
 
 This is the simplest real payment there is: one customer, one beneficiary, same country, same currency, no intermediaries. Every later case study is this one with something added — more payments (payroll), more borders (cross-border), something gone wrong (the exceptions). Get this flow solid and the rest are variations on a theme.
 
@@ -26,6 +26,8 @@ Four parties, no more:
 Bob and Sweety bank at different institutions, but both are reachable on the same domestic real-time rail. That single shared system is what lets their banks pay each other without ever having met.
 
 ## The flow, message by message
+
+{{flow:One payment, four hands|Bob ~ The debtor — he starts it|-> instructs|Bob's bank ~ The debtor agent|-> pays across the shared rail|Clearing & settlement ~ The system both banks trust|-> credits|Sweety's bank ~ The creditor agent|-> notifies|Sweety ~ The creditor — it's for her}}
 
 Follow the ₹33,000. Each step is exactly one message you already know.
 
@@ -63,3 +65,7 @@ Bob experiences acceptance as "done." The payment is only truly done at settleme
 ## So, what can you now do?
 
 You can walk a single domestic customer credit transfer from tap to reconciled — naming the message at each step (pain.001 instruct, pain.002 receipt, pacs.008 execute, pacs.002 confirm, camt.054 notify, camt.053 state), the four parties that touch it (debtor, debtor agent, creditor agent, creditor), and the `EndToEndId` and `UETR` that hold it together. You can tell acceptance apart from settlement — the tick is not the money — and you can see why this one flow is the spine every other case study hangs off.
+
+{{check:In the classic Bob-pays-Sweety story, the customer’s instruction and the interbank move are…|Two different messages on two different legs of the journey|The same message forwarded twice|Optional — banks can skip either one}}
+
+{{check:Sweety knows the money arrived before any statement. How?|Her bank sends a real-time credit notification the moment the funds book|Bob calls her bank every evening|The clearing house emails her directly}}

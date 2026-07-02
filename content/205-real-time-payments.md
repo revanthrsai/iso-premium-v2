@@ -55,3 +55,7 @@ This is precisely why the **Exceptions** level later in the Library exists, and 
 ## So, what can you now do?
 
 You can define a real-time payment by the four traits that always travel together — fast, always-on, final, and push — rather than just "quick." You can explain how those traits compress the five lifecycle stages into a single few-second burst, why that demands flawless messages, and how banks reconcile an instant customer experience with the slower reality of interbank settlement. And you can see the catch clearly: finality is what makes these rails powerful and what makes the Exceptions level that follows essential. With that, you've walked the whole Architecture level — from the shared roads, through a bank's door, brain, and split-second router, to the instant rails reshaping all of it.
+
+{{check:What makes a payment “real-time”?|It clears and settles in seconds, any time of day, with immediate finality|It travels over the public internet instead of private networks|It skips validation to save time}}
+
+{{check:What operational challenge do 24/7 instant rails create for banks?|Liquidity and operations must be managed around the clock, not just business hours|Payments become too small to be worth processing|Weekend payments have no legal standing}}

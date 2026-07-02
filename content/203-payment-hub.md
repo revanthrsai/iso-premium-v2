@@ -48,3 +48,7 @@ Door, brain, road. A payment enters through the gateway, is orchestrated by the 
 ## So, what can you now do?
 
 You can explain why a modern bank funnels all its payments through one central engine instead of a pile of separate silos, and what that engine actually does: route each payment to the right system, run it through the checks and conversions it needs, in the right order, and dispatch it onward — all while holding a single trusted record of everything in flight. And you can keep the gateway, the hub, and the payment system cleanly apart as door, brain, and road. That three-part picture is the skeleton of how a payment moves through a bank.
+
+{{check:Why do banks build a payment hub?|One central brain for all payment flows instead of one silo per channel and scheme|To hold customer deposits in a single place|Because regulators require a separate system per country}}
+
+{{check:What problem do per-scheme silos create that a hub solves?|The same logic is duplicated and drifts apart — every change must be made many times over|Silos process payments too quickly to monitor|Silos cannot connect to a network}}

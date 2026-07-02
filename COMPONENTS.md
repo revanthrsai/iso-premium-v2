@@ -270,6 +270,20 @@ The editorial building blocks for a page body. These carry the lesson voice
   </div>
   ```
 
+### `flow-diagram` — beat-4 business-terms flow (Session 7.6)
+- **Props:** authored in lesson Markdown as a one-line token, never hand-written
+  HTML: `{{flow:Title|Stop ~ caption|-> arrow label|Stop ~ caption|...}}`.
+  Rendered by `assets/js/flow-diagram.js` (`FlowDiagram.html`), expanded by
+  `markdown.js`. Numbered stops (name + caption) joined by labelled arrows.
+  Business terms only (no tags, no XML) per the Lesson Spine beat 4.
+  Theme-aware (all colors from `DESIGN_TOKENS.css`); animated by `motion.js`'s
+  living process-map engine (`data-flow` — actors appear in sequence, then a
+  value pulse travels stop to stop); stacks vertically under 560px.
+- **Example (in a lesson `.md`, on its own line):**
+  ```
+  {{flow:How the world solved it|Bob ~ The sender|-> instructs|Bob's bank ~ Debtor agent|-> pays across the rail|Sweety's bank ~ Creditor agent}}
+  ```
+
 ### `tags` / `tag` — metadata pills
 - **Props:** none. `.tags` wrapper, `.tag` per chip.
 - **Example:** `<div class="tags"><span class="tag">Credit transfer</span></div>`

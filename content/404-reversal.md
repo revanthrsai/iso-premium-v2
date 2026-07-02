@@ -78,3 +78,7 @@ Rule of thumb: if you **pushed** money to someone and want it back, you **recall
 ## So, what can you now do?
 
 You can explain what a reversal is, name the message that performs it (`pacs.007`, with `pain.007` on the customer side), describe why a reversal needs no permission while a recall does, connect reversals to the direct-debit world where the originator pulled the funds, and place all four Level 400 exceptions on one timeline: reject (before settlement), then return, recall, and reversal (all after).
+
+{{check:What does a reversal fix?|The sender’s own mistake — such as a duplicate — by undoing a payment already made|The receiver’s wrong invoice number|A temporary network outage}}
+
+{{check:Reversal vs return — the key difference?|A reversal starts from the sending side; a return comes from the receiving side|They are exactly the same thing|A return happens before settlement, a reversal never does}}

@@ -48,7 +48,7 @@ Every ISO 20022 payment message you will ever read — the `pacs.008`, the `pacs
 
 If you understand the accounts, the messages are just paperwork describing moves between them. If you don't, the messages feel like alphabet soup.
 
-{{embed:page:journey|Walk the full Bob → Sweety journey}}
+{{embed:article:505-end-to-end-payment-flow|Walk the full Bob → Sweety journey}}
 
 ## The catches, in plain terms
 
@@ -59,3 +59,7 @@ If you understand the accounts, the messages are just paperwork describing moves
 ## So, what can you now do?
 
 You can explain — to a colleague or an interviewer — why a cross-border payment needs no physical cash to cross any border, what a correspondent bank is for, and the one-line test for nostro vs vostro: *whose books am I reading?* That single idea is the floor everything else in this academy is built on.
+
+{{check:Your bank holds an account at a foreign bank to pay in that country. From your bank’s point of view, that account is…|A nostro — our money, held with you|A vostro — your money, held with us|An escrow account held by the regulator}}
+
+{{check:Why must nostro and vostro records always reconcile?|They are two views of the same account, so any difference means an error|Regulators require identical wording in both banks’ statements|They are separate pools of money that must be kept equal in size}}

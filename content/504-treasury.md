@@ -10,7 +10,7 @@ related: [504-treasury, 501-customer-transfer, 101-nostro-vostro, 303-camt-famil
 earnedSkill: "Explain why a bank moves its own money — funding nostro positions and managing intraday liquidity — name the message that does it (pacs.009, no customer attached) and the camt reports the treasurer reads to decide, and tell a treasury payment apart from a customer payment by asking the one question: whose money is moving, and to pay whom?"
 ---
 
-> **The problem first.** All day, the pacs.008s you've been following landed in Sweety's bank — credits arriving from dozens of other banks, debits leaving to dozens more. By 4 p.m. one of the bank's accounts at a correspondent is nearly empty and another is overflowing. None of it belongs to Bob or Sweety anymore; it's the bank's own money, sitting in the wrong places. If nobody moves it, tomorrow morning a perfectly good customer payment will fail — not because anything was wrong with it, but because the bank had no funds in the right account to settle it. So who notices, and what message do they send to put the money back where it needs to be?
+> **The problem first.** All day, the payments you've been following landed in Sweety's bank — credits arriving from dozens of other banks, debits leaving to dozens more. By 4 p.m. one of the bank's accounts at a correspondent is nearly empty and another is overflowing. None of it belongs to Bob or Sweety anymore; it's the bank's own money, sitting in the wrong places. If nobody moves it, tomorrow morning a perfectly good customer payment will fail — not because anything was wrong with it, but because the bank had no funds in the right account to settle it. So who notices, and what do they send to put the money back where it needs to be?
 
 Every case study so far moved a *customer's* money to pay *someone else*. Treasury is the one flow where neither of those is true: the bank moves **its own money** to pay **itself** — shifting funds between its own accounts so that tomorrow's customer payments have somewhere to settle from. Same rails, same lifecycle, same families you know. What changes is the answer to one question — *whose money, and to pay whom?*
 
@@ -70,3 +70,7 @@ That's the tell for every treasury payment you'll ever see: there's no customer 
 ## So, what can you now do?
 
 You can explain why a bank moves its own money — customer payments constantly drain one account and fill another, and liquidity management keeps every account the bank pays *from* funded before its cut-off. You can name the messages: camt.052 and camt.053 to *see* the positions, pacs.009 to *move* the funds, with no pain.001 in front because no customer instructed it. And you can tell a treasury payment apart from every other flow in the Library with one question — *whose money is moving, and to pay whom?* — because here, uniquely, the answer to both is "the bank itself."
+
+{{check:How does a bank moving its own money differ from moving a customer’s?|The banks themselves are the parties — it is an institution-to-institution transfer|It cannot be done electronically|It requires the customer’s consent}}
+
+{{check:What is a cover payment?|A separate interbank transfer that moves the real funds behind a customer payment routed another way|Insurance purchased against fraud|The fee a bank charges for a transfer}}

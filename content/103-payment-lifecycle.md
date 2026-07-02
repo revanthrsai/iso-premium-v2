@@ -26,6 +26,8 @@ Almost every payment, simple or complex, domestic or cross-border, moves through
 
 Hold that list. Everything below is just a closer look at each leg, following Bob's $400 to Sweety.
 
+{{flow:The relay, leg by leg|Initiation ~ Someone asks for the payment|Validation ~ The bank checks it can happen|Clearing ~ The banks agree who owes what|Settlement ~ The value actually moves|Reconciliation ~ Everyone's books agree}}
+
 ## 1. Initiation — the ask
 
 This is the tap. Bob tells his bank, in effect, *"pay Sweety $400."* The instruction can come from a person on a phone, a company's payroll file, a card terminal, or another bank passing along a payment it received.
@@ -70,8 +72,12 @@ The reason this lifecycle is worth memorising: **failures have addresses.** When
 - Money left but never arrived, or arrived twice? A **settlement or reconciliation** problem.
 - Needs to be undone after the fact? That's a whole separate world of *exception* messages — recalls, returns, reversals — which only exist *because* settlement is so hard to undo.
 
-{{embed:page:journey|Walk the full Bob → Sweety lifecycle, stage by stage}}
+{{embed:article:505-end-to-end-payment-flow|Walk the full Bob → Sweety lifecycle, stage by stage}}
 
 ## So, what can you now do?
 
 You can take any payment — instant or slow, local or cross-border — and place it on a five-stage map: **initiation, validation, clearing, settlement, reconciliation.** And you can do the thing experts do without thinking: when something goes wrong, ask *which stage?* before asking *why?* That instinct is what the rest of this academy sharpens.
+
+{{check:Which order matches a payment’s life?|Initiation, then interbank clearing and settlement, then reporting|Reporting, then settlement, then initiation|Settlement first, then the customer’s instruction}}
+
+{{check:Why do banks send status updates along the way?|So the sender knows whether the instruction was accepted, rejected, or still pending|To charge additional fees at each step|Because the funds cannot move without them}}

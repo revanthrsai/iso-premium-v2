@@ -10,7 +10,7 @@ related: [405-investigations, 403-recall, 402-return, 305-message-lifecycle]
 earnedSkill: "Explain what an investigation is and when it's needed, name the case-management messages (camt.027 claim non-receipt, camt.026 unable to apply, camt.028 additional info, camt.029 resolution), describe how a case opens and closes, and tell an investigation apart from the clean exceptions."
 ---
 
-> **The problem first.** Bob's payment to Sweety left his account three days ago. It wasn't rejected — no red cross. It wasn't returned — no money came back. It just... never arrived. Somewhere among the intermediary banks the payment is sitting, mislabelled or stuck, and the `UETR` tracking shows it reached a correspondent and then went silent. Nobody did anything obviously wrong, so none of the clean exceptions fired. How do banks *hunt down* a payment that simply disappeared — without phoning each other up?
+> **The problem first.** Bob's payment to Sweety left his account three days ago. It wasn't rejected — no red cross. It wasn't returned — no money came back. It just... never arrived. Somewhere among the intermediary banks the payment is sitting, mislabelled or stuck, and the tracking trail shows it reached a correspondent and then went silent. Nobody did anything obviously wrong, so none of the clean exceptions fired. How do banks *hunt down* a payment that simply disappeared — without phoning each other up?
 
 The last three chapters were tidy. A reject, a return, a reversal each has a clear cause and a single message that puts it right. **Investigations** are the messy reality: a payment that didn't fail cleanly. It's late, lost, applied to the wrong account, missing its remittance information, or stuck at a correspondent — and finding out *why* takes a back-and-forth conversation between banks.
 
@@ -84,3 +84,7 @@ You now have the full exceptions map. Every payment that doesn't sail through cl
 ## So, what can you now do?
 
 You can explain what an investigation is and when it's the right tool (a payment that's wrong or missing but doesn't fit a clean exception), name the case-management messages (`camt.027` claim non-receipt, `camt.026` unable to apply, `camt.028` additional info, `camt.029` resolution), describe how a case opens with a question and closes with a resolution, follow the `UETR` that keeps the whole case pinned to one payment, and explain how an investigation can hand off to a return or recall once the facts are known.
+
+{{check:A payment seems lost mid-chain. What makes it findable?|Its unique end-to-end tracking reference, quoted in the investigation|Guessing which bank might hold it|Waiting for the monthly statement}}
+
+{{check:What is the goal of an investigation exchange?|Asking a precise, structured question about one payment instead of trading free-text emails|Penalising the bank that caused the delay|Automatically re-sending the payment}}

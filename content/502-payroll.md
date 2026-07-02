@@ -60,3 +60,7 @@ The thread still holds: each transaction's own reference (`PAYROLL-JUN26-0147`) 
 ## So, what can you now do?
 
 You can explain how a bulk payment differs from a single transfer: one pain.001 carrying a header plus many credit-transfer transactions, the batch-vs-single booking choice that decides whether the debtor sees one debit or many, the fan-out into one independently-routed pacs.008 per beneficiary, and how a single failure returns on its own without touching the rest of the run. You can follow how reporting splits — one batch line for the payer, one credit notification per payee — while each payment's own reference keeps it individually traceable.
+
+{{check:Why does payroll fit naturally into one batched instruction?|Many payments share one debtor, one account, and one date — the file states that once|Each salary legally needs its own file|Employees must be paid strictly one at a time}}
+
+{{check:One employee’s account number is wrong in a 500-payment payroll file. The likely result?|That one payment fails and comes back with a reason; the rest go through|The whole month’s payroll is void|The bank pays the wrong person with no way back}}

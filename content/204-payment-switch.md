@@ -48,3 +48,7 @@ Authorisation is the oldest example, but the pattern reappears wherever a paymen
 ## So, what can you now do?
 
 You can tell a switch from a hub by what each is built for: the hub routes payments correctly through many steps and can take its time; the switch routes one request instantly and cannot. You can walk through what an authorisation switch does in the split second of a card tap — receive, route, decide, reply — and explain that its "yes" is a promise, with real settlement following later over a payment system. And you can spot the switch pattern anywhere a payment needs an answer while a customer is still waiting, which is exactly the world the final article in this level — [Real-Time Payments](#) — is built around.
+
+{{check:What does a payment switch do?|Routes each transaction to the right destination network or processor in real time|Converts currencies between countries|Stores customer account balances}}
+
+{{check:Where would you most expect to find a switch?|In card and instant-payment networks, where traffic must route in milliseconds|In monthly batch payroll runs|Inside a customer’s mobile app}}

@@ -80,3 +80,7 @@ The whole of Level 400 hinges on this: **a reject happens before settlement, so 
 ## So, what can you now do?
 
 You can tell a reject apart from the other three exceptions by the single question *has it settled yet?*, name the message that carries a reject (pain.002 to the customer, pacs.002 between banks), read the `RJCT` status and its reason code, point to the `OrgnlEndToEndId` that ties a rejection back to the payment it killed, and explain why a reject is the only Level 400 exception that never sends money back.
+
+{{check:What is a reject?|A payment turned away before settlement — no money has moved|Money sent back after it settled|A customer cancelling a subscription}}
+
+{{check:What should a reject always carry?|A reason code that says exactly why it was refused|The sender’s current account balance|An automatic replacement payment}}

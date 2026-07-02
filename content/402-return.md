@@ -80,3 +80,7 @@ Said simply: a return is the receiver volunteering the money back; a recall is t
 ## So, what can you now do?
 
 You can explain why a return only exists after settlement, name the message that performs it (`pacs.004`) and the field that proves money is moving (the returned settlement amount), read a return reason code, describe the U-turn the funds make back through the chain to the debtor, and tell a return apart from a reject (no money) and a recall (the sender asks, the receiver decides).
+
+{{check:What is a return?|Settled funds sent back because the payment could not be applied|A payment refused before settlement|A duplicate of the original instruction}}
+
+{{check:The destination account is closed. What typically comes back?|A return carrying a reason code such as “account closed”|Nothing — the funds are kept by the bank|A brand-new payment with no reference to the original}}

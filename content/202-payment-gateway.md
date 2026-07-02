@@ -49,3 +49,7 @@ It's worth being precise about what the gateway is *not*. It doesn't decide wher
 ## So, what can you now do?
 
 You can describe exactly what happens in the first moments after a payment reaches a bank: it is authenticated, validated, translated into the bank's own format, and tidied up — all at a single guarded entrance. You understand why that front-door work exists: it lets everything deeper inside the bank trust its input and stay simple. And you know where the payment goes next — to the hub that decides its route — which is precisely where the Architecture story continues.
+
+{{check:What is a payment gateway’s core job?|Being the secure entry door where instructions enter a bank’s processing world|Settling funds between central banks|Deciding foreign-exchange rates}}
+
+{{check:Why do gateways validate at the door?|Catching a broken instruction early is far cheaper than unwinding it downstream|Regulation forbids storing invalid files|The network refuses unencrypted traffic}}

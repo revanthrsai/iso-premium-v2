@@ -10,7 +10,7 @@ related: [102-what-is-a-payment, 104-clearing-and-settlement, 101-nostro-vostro]
 earnedSkill: "Name the parties in a payment by their roles — payer, payee, their banks, any intermediaries, and the systems behind them — and map a real transfer onto that cast."
 ---
 
-> **The problem first.** Bob sends Sweety $400. It feels like a two-person event: Bob and Sweety. But the money passes through at least four organisations to get there, and the messages that move it have a precise name for each one. If you think it's just "sender and receiver," every message will read like it's full of strangers.
+> **The problem first.** Bob sends Sweety $400. It feels like a two-person event: Bob and Sweety. But the money passes through at least four organisations to get there, and each one has a precise name and a precise job. If you think it's just "sender and receiver," everything that moves the money will read like it's full of strangers.
 
 A payment seems like a private affair between two people. Behind the scenes it's a small **relay team**, each member with a defined job and a defined name. The good news: the cast is short, the roles are logical, and once you can name them, the otherwise-cryptic party fields inside every payment message become obvious. This article introduces the players. Everything later just refers back to them.
 
@@ -66,3 +66,7 @@ Learn the roles here, in plain language, and the messages stop being walls of un
 ## So, what can you now do?
 
 You can take any payment and name everyone involved by their role — debtor and creditor, their two agents, any intermediaries between them, and the systems and scheme underneath. And you'll recognise those same roles the instant you open a real message, because the message is built out of exactly this cast. That recognition is the bridge from *fundamentals* to the *architecture* and *messages* that the rest of the Library is built on.
+
+{{check:Who are the two end parties in a typical payment?|The debtor (payer) and the creditor (payee)|The two banks in the middle|The clearing house and the central bank}}
+
+{{check:What role does an intermediary (correspondent) bank play?|It bridges two banks that have no direct relationship|It holds the payment until both end parties confirm|It sets the exchange rate for the whole market}}

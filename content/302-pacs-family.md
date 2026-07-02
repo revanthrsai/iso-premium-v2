@@ -10,7 +10,7 @@ related: [302-pacs-family, 301-pain-family, 301-pacs-008, 105-payment-participan
 earnedSkill: "Explain what the pacs family is for, tell pacs.008 from pacs.009, describe the round trip from instruction to confirmation or return, and point to the single reference that proves a pacs.008 came from a particular pain.001."
 ---
 
-> **The problem first.** Bob's bank has his instruction and his money is good. But Sweety banks somewhere Bob's bank has never directly met — another country, another regulator, no shared account. Bob's bank can't just phone them up. It has to send a message that one or more *other* banks can read, act on, and forward — each one moving real money on its own books — until ₹33,000 finally lands in Sweety's account. What does that message look like, and how do the banks tell each other it worked?
+> **The problem first.** Bob's bank has his instruction and his money is good. But Sweety banks somewhere Bob's bank has never directly met — another country, another regulator, no shared account. Bob's bank can't just phone them up. It has to send something one or more *other* banks can read, act on, and forward — each one moving real money on its own books — until ₹33,000 finally lands in Sweety's account. What does that instruction look like, and how do the banks tell each other it worked?
 
 That's the **pacs family** — **Payments Clearing and Settlement**. These are the messages banks send *to each other* to actually move money and report what happened. If pain is the order you place at the counter, pacs is everything that happens in the kitchen.
 
@@ -79,3 +79,7 @@ For the full field-by-field tour of this message — the three identifiers every
 ## So, what can you now do?
 
 You can explain what the pacs family is for, tell pacs.008 (move a customer's money) from pacs.009 (move a bank's own money), describe the round trip from instruction to a pacs.002 confirmation or a pacs.004 return, name the debtor agent, intermediary agent, and creditor agent at each hop, and point to the single reference that proves a pacs.008 came from a particular pain.001.
+
+{{check:The pacs family lives on which leg of the journey?|Bank to bank — clearing and settlement|Customer to bank|Bank to customer reporting}}
+
+{{check:A settled payment cannot be applied and the money must go back. Which pacs member does that?|pacs.004 — the payment return|pacs.002 — the status report|pacs.009 — the financial-institution transfer}}

@@ -58,3 +58,7 @@ When you reach the ISO 20022 message families, you'll notice the standard is car
 ## So, what can you now do?
 
 You can stop using "clearing" and "settlement" as synonyms and explain the difference cleanly: clearing **agrees** the obligation, settlement **discharges** it with finality. You can say why net and gross settlement exist and which payments go which way. And you can answer the question that opened this article — a payment becomes truly final not when it's *sent*, not when it *clears*, but when it **settles.**
+
+{{check:What is the difference between clearing and settlement?|Clearing agrees who owes what; settlement actually moves the funds|Clearing moves the funds; settlement checks them afterwards|They are two words for the same step}}
+
+{{check:When is a payment truly final?|When settlement completes irrevocably|When the sender’s app shows a confirmation|When the instruction reaches the next bank}}

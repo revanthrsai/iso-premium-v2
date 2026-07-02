@@ -10,7 +10,7 @@ related: [201-business-application-header, 304-head-admi, 301-pacs-008, 302-pacs
 earnedSkill: "Explain what the Business Application Header carries, why it rides separately from the message body, how Fr / To / BizMsgIdr / MsgDefIdr let a network route and validate a message without parsing its contents, and how the BAH replaces the old MT header block."
 ---
 
-> **The problem first.** A `pacs.008` says *what* to do: pay ₹33,000 from Bob to Sweety. But who is it *from*? Who should *receive* it next? Which market's rules apply, and which exact version of the message is this? If all of that lived buried inside the payment, every router, gateway, and hub along the way would have to parse the entire message — validate its schema, walk its tree — just to decide where to forward it. At scale, that's madness. So ISO 20022 does what the postal service figured out centuries ago: it puts the addressing on the *outside*.
+> **The problem first.** A payment instruction says *what* to do: pay ₹33,000 from Bob to Sweety. But who is it *from*? Who should *receive* it next? Which market's rules apply, and which exact version of the instruction is this? If all of that lived buried inside the payment, every router, gateway, and hub along the way would have to open the whole thing up and read it end to end just to decide where to forward it. At scale, that's madness. So ISO 20022 does what the postal service figured out centuries ago: it puts the addressing on the *outside*.
 
 That outside is the **Business Application Header** — **head.001**, the BAH. It is a small, standard block that rides in front of every business message, carrying exactly the facts a network needs to move and check the message **without reading its contents**.
 
@@ -76,3 +76,7 @@ The BAH is the modern, structured replacement. It's the **same idea** — addres
 ## So, what can you now do?
 
 You can explain what the Business Application Header (`head.001`) is — the envelope around every ISO 20022 message — and why it rides separately from the body: so a network can route and pre-validate without parsing the payload. You can name its core fields (`Fr`, `To`, `BizMsgIdr`, `MsgDefIdr`, `CreDt`, `BizSvc`) and say what each does, distinguish the header's own `BizMsgIdr` from the `EndToEndId` / `UETR` inside the payment, and explain how the BAH replaces the fixed, network-bound MT header block with one extensible envelope for the whole standard.
+
+{{check:What job does the envelope wrapped around each payment do?|It says who sends it, who receives it, and what kind of content is inside — before anything is opened|It carries the settlement amount|It replaces the payment instruction entirely}}
+
+{{check:Why separate the envelope from the letter?|Routing systems can direct the traffic without parsing the full contents|The envelope doubles as a legal contract|Envelopes are encrypted and letters are not}}

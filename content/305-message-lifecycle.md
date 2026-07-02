@@ -10,7 +10,7 @@ related: [301-pain-family, 302-pacs-family, 303-camt-family, 304-head-admi]
 earnedSkill: "Trace one payment end-to-end through the pain, pacs, and camt families inside their head envelopes, name which family owns each step, and explain how a single reference threads the whole journey so the same payment can be tracked across every hop."
 ---
 
-> **The problem first.** You now know four families on their own — pain instructs, pacs settles, camt reports, head wraps. But a real payment doesn't use them one at a time, in isolation. Bob taps "send" once, and a relay race begins: each family takes the baton, runs its leg, and hands off to the next, until ₹33,000 reaches Sweety and everyone has been told it arrived. So what does the *whole* chain look like, in order — and what makes a payment that a dozen banks touched still readable as one journey?
+> **The problem first.** You now know four families of instruction on their own — one initiates, one settles, one reports, one wraps the rest. But a real payment doesn't use them one at a time, in isolation. Bob taps "send" once, and a relay race begins: each family takes the baton, runs its leg, and hands off to the next, until ₹33,000 reaches Sweety and everyone has been told it arrived. So what does the *whole* chain look like, in order — and what makes a payment that a dozen banks touched still readable as one journey?
 
 This page is the map. Every message family in Level 300 exists to own one stretch of a payment's life. Put them in order and the standard stops being a pile of acronyms and becomes a single, legible story.
 
@@ -54,3 +54,7 @@ Read those four lines top to bottom and you've read the life of a payment. Want 
 ## So, what can you now do?
 
 You can trace one payment end-to-end through pain, pacs, and camt — naming which family owns each step and where one hands off to the next — explain that every message rides inside a head.001 envelope over admi-maintained rails, and point to the `EndToEndId` and `UETR` as the threads that let a payment crossing many banks still be read, tracked, and reconciled as a single journey. That completes Level 300.
+
+{{check:Across one payment’s life, the families appear in which order?|Initiation (customer to bank), settlement (bank to bank), then reporting (bank to customer)|Reporting first, then initiation, then settlement|All three fire at the same moment}}
+
+{{check:Why does one payment produce several different messages?|Each leg has a different speaker, listener, and job — no single message fits them all|Networks charge less for many small messages|Legacy rules require everything in triplicate}}

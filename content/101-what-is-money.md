@@ -44,7 +44,7 @@ If money is numbers in ledgers, an obvious danger appears: what stops someone fr
 
 Banks reconcile their records against each other constantly. Central banks keep the master ledgers that commercial banks settle on. Rules, audits, and shared infrastructure exist for one reason — to make sure that when one ledger says "Bob paid $400," every other ledger that matters agrees, and no money is invented or lost along the way. Most of the machinery you'll meet later in this academy exists to keep these ledgers honest and in step.
 
-{{embed:page:journey|See how value moves through the system, end to end}}
+{{embed:article:505-end-to-end-payment-flow|See how value moves through the system, end to end}}
 
 ## Why this comes before everything else
 
@@ -55,3 +55,7 @@ If you remember that money is a **transferable promise recorded on a ledger**, t
 ## So, what can you now do?
 
 You can answer the question that trips up most people: money is not the cash, it's the trusted claim the cash represents — and today that claim mostly lives as a number on a bank's ledger. With that one idea in hand, a "payment" is no longer magic. It's an agreed edit to two ledgers, which is exactly where we go next.
+
+{{check:What is money, at its core?|A transferable promise recorded on a trusted ledger|The physical notes and coins in circulation|A commodity whose value comes from its material}}
+
+{{check:When Bob sends Sweety $400 from his phone, what actually moves?|Nothing physical — two ledger entries change|An encrypted digital coin travels between the phones|Cash is physically relocated between bank vaults}}

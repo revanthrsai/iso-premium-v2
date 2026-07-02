@@ -3161,28 +3161,27 @@ body.light-mode ::selection { background: rgba(14, 159, 112, 0.20); }
 ::-webkit-scrollbar-corner { background: transparent; }
 
 /* ---- GLOBAL FOCUS-VISIBLE ----------------------------------------------
-   One calm emerald ring for keyboard users on every interactive element;
-   never shown for mouse clicks (focus-visible only). */
+   One calm emerald ring for keyboard users on EVERY interactive element,
+   never shown for mouse clicks (focus-visible only).
+   7.4: dropped the fixed selector allowlist — which silently missed
+   glossary chips, filter chips and generic content links — for a single
+   universal :focus-visible rule. The browser fires focus-visible only on
+   genuine keyboard focus, so this rings everything focusable (including any
+   element added later) without an allowlist to fall out of date. */
 :focus { outline: none; }
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-[tabindex]:focus-visible,
-.nav-item:focus-visible,
-.btn:focus-visible,
-.theme-toggle:focus-visible,
-[role="button"]:focus-visible {
+:focus-visible {
     outline: none;
-    box-shadow: var(--ring);
+    box-shadow: var(--ring-strong);
     border-radius: var(--radius-sm);
     transition: box-shadow var(--dur-fast) var(--ease-out);
 }
-/* buttons keep their own radius under the ring */
-.btn:focus-visible { border-radius: var(--radius-sm); }
-.nav-item:focus-visible { border-radius: var(--radius-pill); }
-.theme-toggle:focus-visible { border-radius: var(--radius-pill); }
+/* pill-shaped controls keep a pill ring; larger cards keep their own radius */
+.nav-item:focus-visible,
+.theme-toggle:focus-visible,
+.filter-chip:focus-visible,
+.tag:focus-visible { border-radius: var(--radius-pill); }
+.learn-card:focus-visible { border-radius: var(--radius-md); }
+.md-embed:focus-visible { border-radius: 14px; }
 
 /* ---- LINKS --------------------------------------------------------------
    Inline links inside prose get an elegant animated underline that grows
@@ -3568,7 +3567,7 @@ body.kinetic-ready .hero-stage .hero-cta { animation-delay: 0.98s; }
     background: var(--surface-alt);
     box-shadow: 0 14px 36px -18px rgba(0, 0, 0, 0.7);
 }
-.learn-card:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+/* focus ring handled globally (7.4); radius override above keeps the card shape */
 .learn-card-top {
     display: flex;
     align-items: center;
@@ -3822,7 +3821,7 @@ body.kinetic-ready .hero-stage .hero-cta { animation-delay: 0.98s; }
     background: var(--surface-alt);
     transform: translateY(-2px);
 }
-.md-embed:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+/* focus ring handled globally (7.4); radius override above keeps the card shape */
 .md-embed-mark {
     flex-shrink: 0;
     width: 42px; height: 42px;
@@ -4126,3 +4125,120 @@ body.light-mode .hero-token { color: var(--primary-deep); text-shadow: 0 0 18px 
     .pager { grid-template-columns: 1fr; }
     .pager-link.pager-next { text-align: left; }
 }
+
+/* ==========================================================================
+   KNOWLEDGE CHECKS + PROGRESS (Session 7.5)
+   The end-of-lesson check card, the "mark as learned" toggle, the learned
+   badge on Library cards, and the Library progress note. Token-driven so
+   both themes work untouched.
+   ========================================================================== */
+.kc-card {
+    margin: var(--space-xl) 0;
+    padding: var(--space-lg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+.kc-kicker {
+    font-family: var(--font-mono);
+    font-size: var(--fs-eyebrow);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--primary);
+}
+.kc-q { margin: 0; font-weight: 600; color: var(--text); }
+.kc-options { display: flex; flex-direction: column; gap: var(--space-xs); }
+.kc-opt {
+    appearance: none;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--surface-alt);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--dur-fast) var(--ease-out),
+                background-color var(--dur-fast) var(--ease-out),
+                opacity var(--dur-fast) var(--ease-out);
+}
+.kc-opt:hover { border-color: var(--primary); background: var(--surface-hi); }
+.kc-opt:disabled { cursor: default; }
+.kc-card.is-answered .kc-opt { opacity: 0.55; }
+.kc-card.is-answered .kc-opt:hover { border-color: var(--border); background: var(--surface-alt); }
+.kc-card.is-answered .kc-opt.is-answer {
+    opacity: 1;
+    border-color: var(--success);
+    background: var(--glass-tint-strong);
+}
+.kc-card.is-answered .kc-opt.is-wrong {
+    opacity: 1;
+    border-color: var(--danger);
+    color: var(--danger);
+}
+.kc-result { margin: 0; min-height: 1.4em; color: var(--text-muted); }
+.kc-result.is-right { color: var(--success); }
+.kc-result.is-wrong { color: var(--danger); }
+
+/* "Mark as learned" toggle at the foot of every lesson */
+.article-learned-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border);
+}
+.learned-toggle {
+    appearance: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font: inherit;
+    font-weight: 600;
+    padding: 10px var(--space-lg);
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    transition: border-color var(--dur-fast) var(--ease-out),
+                background-color var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out);
+}
+.learned-toggle:hover { border-color: var(--primary); }
+.learned-toggle .learned-tick { display: inline-flex; opacity: 0.35; transition: opacity var(--dur-fast) var(--ease-out); }
+.learned-toggle.is-learned {
+    border-color: var(--primary-deep);
+    background: var(--glass-tint-strong);
+    color: var(--primary);
+}
+.learned-toggle.is-learned .learned-tick { opacity: 1; }
+.learned-hint { color: var(--text-faint); font-size: 0.9em; }
+
+/* Learned badge on Library cards */
+.learn-card-done {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-eyebrow);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--success);
+}
+
+/* Progress note between the Library head and the level sections */
+.learn-progress {
+    margin: 0 0 var(--space-2xl);
+    font-family: var(--font-mono);
+    font-size: var(--fs-eyebrow);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+.learn-progress-count { color: var(--primary); }

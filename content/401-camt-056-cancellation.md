@@ -10,7 +10,7 @@ related: [401-camt-056-cancellation, 403-recall, 402-return, 405-investigations]
 earnedSkill: "Read a camt.056 field by field, name its three structural parts (Assignment, Case, Underlying), pick the right cancellation reason code, trace how the camt.029 answer decides whether a pacs.004 return follows, and state the one distinction that matters most: a camt.056 requests, a pacs.004 returns."
 ---
 
-> **The problem first.** Bob's bank just sent ₹33,000 to Sweety — and then realised it sent it **twice**. The duplicate settled too. The money is sitting safely in Sweety's account, where it has every right to be; nobody on her side did anything wrong. There is no "undo" button on a settled payment. So how does Bob's bank *ask* Sweety's bank to give it back — in a structured message the receiver can act on automatically, knowing the answer might be **no**?
+> **The problem first.** Bob's bank just sent ₹33,000 to Sweety — and then realised it sent it **twice**. The duplicate settled too. The money is sitting safely in Sweety's account, where it has every right to be; nobody on her side did anything wrong. There is no "undo" button on a settled payment. So how does Bob's bank *ask* Sweety's bank to give it back — in a structured request the receiver can act on automatically, knowing the answer might be **no**?
 
 That message is **camt.056** — *FI to FI Payment Cancellation Request*. The **recall chapter** told the story of the flow; this is the **field-by-field** read of the request itself, the first of the **R-transactions**.
 
@@ -94,3 +94,7 @@ A recall that is refused produces a camt.029 and no pacs.004 — the money stays
 ## So, what can you now do?
 
 You can read a camt.056 field by field; name its three parts (`Assgnmt`, `Case`, `Undrlyg`); choose the right cancellation reason code (`DUPL`, `FRAD`, `CUST`, `TECH`, `AGNT`, `UPAY`); trace how a camt.029 answer decides whether a `pacs.004` return follows; and state the one distinction that matters most — a **camt.056 requests, a pacs.004 returns**, and only a granted request ever moves money.
+
+{{check:What does camt.056 ask for?|Cancellation of a payment already in flight — please don’t process it|The automatic return of settled funds|A copy of the account statement}}
+
+{{check:Why is a cancellation request not a guarantee?|The payment may already have settled — then getting funds back needs the receiver’s consent|The network deletes requests after an hour|Cancellations only work on weekends}}

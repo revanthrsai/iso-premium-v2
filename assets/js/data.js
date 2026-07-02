@@ -654,3 +654,45 @@ function getMessageByCode(code) {
     }
     return null;
 }
+
+// ===========================================================================
+// Progress store (Session 7.5) — lightweight localStorage replacement for the
+// deleted ProgressEngine. Shape: { "<lesson-id>": { learned, learnedAt,
+//   checks: { "<qIndex>": { correct, at } } } } under one versioned key.
+// All reads are defensive: a corrupt or blocked localStorage degrades to {}.
+// ===========================================================================
+const Progress = (function () {
+    const KEY = 'iso-academy-progress-v1';
+    function read() {
+        try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
+        catch (e) { return {}; }
+    }
+    function write(state) {
+        try { localStorage.setItem(KEY, JSON.stringify(state)); }
+        catch (e) { /* private mode / quota — progress just won\u2019t persist */ }
+    }
+    return {
+        isLearned(id) {
+            const s = read();
+            return !!(s[id] && s[id].learned);
+        },
+        setLearned(id, val) {
+            const s = read();
+            s[id] = s[id] || {};
+            s[id].learned = !!val;
+            s[id].learnedAt = val ? new Date().toISOString() : null;
+            write(s);
+        },
+        recordCheck(id, qIndex, correct) {
+            const s = read();
+            s[id] = s[id] || {};
+            s[id].checks = s[id].checks || {};
+            s[id].checks[qIndex] = { correct: !!correct, at: new Date().toISOString() };
+            write(s);
+        },
+        learnedCount() {
+            const s = read();
+            return Object.keys(s).filter(k => s[k] && s[k].learned).length;
+        }
+    };
+})();

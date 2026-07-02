@@ -10,7 +10,7 @@ related: [304-head-admi, 305-message-lifecycle, 302-pacs-family, 201-business-ap
 earnedSkill: "Explain what the Business Application Header (head.001) does and why it sits outside the message, tell the head family from the admi family, and recognise an admi message as network housekeeping rather than a payment."
 ---
 
-> **The problem first.** Bob's bank wants to send Sweety's pacs.008, but the network it's handing to is enormous — thousands of banks, millions of messages a day. The payment itself says *who pays whom*, but it doesn't say *which institution is sending this envelope, to which institution, right now, and whether it's a copy or the real thing*. A mail room can't sort a letter with no address on the outside. So where does that routing information live — and what keeps the whole postal network itself running?
+> **The problem first.** Bob's bank wants to send Sweety's payment onward, but the network it's handing to is enormous — thousands of banks, millions of instructions a day. The payment itself says *who pays whom*, but it doesn't say *which institution is sending this envelope, to which institution, right now, and whether it's a copy or the real thing*. A mail room can't sort a letter with no address on the outside. So where does that routing information live — and what keeps the whole postal network itself running?
 
 Two small but essential families answer that: **head** — the *header* that wraps every business message — and **admi** — short for **administration**, the network's own housekeeping. Neither moves money. Both are what let the messages that *do* move money actually get where they're going.
 
@@ -49,3 +49,7 @@ So every real message on the wire is really *two* things stacked: an **envelope*
 ## So, what can you now do?
 
 You can explain what the Business Application Header does and why it lives *outside* the business message, list the routing facts it carries (from, to, message type, id, timestamp, duplicate flag), tell the head family (the envelope on every message) from the admi family (the network's own housekeeping), and recognise an admi message as plumbing — never a payment.
+
+{{check:head.001 wraps a payment like…|An envelope around a letter — addressing it without opening the contents|A padlock around a vault|A receipt stapled to an invoice}}
+
+{{check:What do the admi messages handle?|System-level administration — the notifications that keep the network itself running|Customer refunds and disputes|Currency conversion between legs}}

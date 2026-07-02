@@ -10,7 +10,7 @@ related: [303-camt-family, 302-pacs-family, 305-message-lifecycle, 103-payment-l
 earnedSkill: "Explain what the camt family is for, tell a statement (camt.053) from an intraday report (camt.052) from a single-payment notification (camt.054), and say where reporting sits in the life of a payment."
 ---
 
-> **The problem first.** Sweety's ₹33,000 has landed. Her bank applied the funds, the pacs.008 settled, everyone's happy. But Sweety doesn't work at the bank — she's at her desk in Bangalore, and as far as she can tell, *nothing has happened* until her bank tells her something did. And her accountant needs more: not just "money arrived," but *which* invoice it paid, on *what* date, leaving *what* balance. Who sends that, and what does it look like?
+> **The problem first.** Sweety's ₹33,000 has landed. Her bank applied the funds, the payment settled, everyone's happy. But Sweety doesn't work at the bank — she's at her desk in Bangalore, and as far as she can tell, *nothing has happened* until her bank tells her something did. And her accountant needs more: not just "money arrived," but *which* invoice it paid, on *what* date, leaving *what* balance. Who sends that, and what does it look like?
 
 That's the **camt family** — short for **Cash Management**. If pain is you instructing your bank and pacs is banks moving the money, camt is everyone being *told what happened* afterwards. It is the reporting layer of the payment world: statements, notifications, and balances.
 
@@ -80,3 +80,7 @@ Read it as a sentence: a **credit** (`CdtDbtInd = CRDT`) of **33,000 INR** was *
 ## So, what can you now do?
 
 You can explain what the camt family is for — reporting, not moving — tell camt.053 (end-of-day statement) from camt.052 (intraday report) from camt.054 (single-entry notification), say which legacy MT messages each one replaced, and place reporting at its proper spot in the life of a payment: the step that finally closes the loop.
+
+{{check:What is the camt family for?|Cash management — statements, intraday reports, notifications, and cancellation requests|Initiating customer payments|Settling between central banks}}
+
+{{check:Which one is the authoritative end-of-day record?|camt.053 — the statement|camt.052 — the intraday report|camt.054 — the single-entry notification}}

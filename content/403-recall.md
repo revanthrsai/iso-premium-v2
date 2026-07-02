@@ -81,3 +81,7 @@ A recall is the only one of the three where the answer can simply be "no."
 ## So, what can you now do?
 
 You can explain why a recall is a request and not a guaranteed return, name the message that asks (`camt.056`) and the one that answers (`camt.029`), describe how a *granted* recall turns into a real `pacs.004` return while a *refused* one returns nothing, and tell a recall apart from a return (receiver-driven, automatic) and a reversal (sender-driven, by right).
+
+{{check:Who starts a recall?|The sending side, asking for its payment back — often for fraud or a duplicate|The receiver, refusing the funds|The clearing house, on a schedule}}
+
+{{check:Why can a recall be refused?|The money now sits in the receiver’s account — giving it back needs their consent|Recalls are legally binding everywhere|The format does not allow a negative answer}}

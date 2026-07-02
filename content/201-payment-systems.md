@@ -64,3 +64,7 @@ This matters for everything that follows in the Library: the strict ISO 20022 me
 ## So, what can you now do?
 
 You can look at any payment and place it on the right road: large and urgent settles gross and immediately; routine and high-volume nets and settles later; small and instant rides an always-on express lane; and anything crossing a border is really a chain of domestic systems joined by correspondents. You also know that every road comes with a rule-book — a scheme — and that those rules are why the messages later in this Library are so precise. That mental map of the infrastructure is the floor the rest of the Architecture level is built on.
+
+{{check:What distinguishes an RTGS from an ACH?|RTGS settles each payment individually in real time; an ACH settles batches in cycles|RTGS is only for small retail payments|An ACH settles instantly; RTGS waits for end of day}}
+
+{{check:Why do high-value payments usually ride an RTGS?|Finality — each payment settles irrevocably, one by one, in central bank money|RTGS systems are cheaper per transaction|Batches cannot legally carry large amounts}}

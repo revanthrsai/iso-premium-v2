@@ -62,3 +62,7 @@ And still, the thread held. The `EndToEndId` `BOB-INV0042` that Bob typed in Dub
 ## So, what can you now do?
 
 You can walk a cross-border payment through correspondent banks — explaining why intermediaries appear (the end banks hold no account with each other), how the customer leg (pacs.008) carries the information while the cover leg (pacs.009 COV) settles the funds, where FX turns one currency into another, and how the shared `UETR` lets the receiving bank reconcile the two legs. You can see that cross-border is the domestic transfer plus a chain — and that the `EndToEndId` survives the whole crossing, keeping it one traceable payment from Dubai to Bangalore.
+
+{{check:Why do cross-border payments often pass through correspondent banks?|The sender’s and receiver’s banks may hold no direct relationship or shared currency accounts|International law requires at least three banks|To deliberately slow payments down for security}}
+
+{{check:What lets a cross-border payment be tracked across every hop?|A globally unique end-to-end reference that every bank preserves|A paper trail posted between the banks|The exchange-rate stamp on the funds}}

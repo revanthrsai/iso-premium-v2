@@ -15,8 +15,11 @@
 // Embed tokens (each on its own line for a card; inline for a link):
 //   {{embed:playground|Label}}            → opens the Playground
 //   {{embed:explorer:PACS.008|Label}}     → opens that message in the Explorer
-//   {{embed:page:journey|Label}}          → navigates to any page
+//   {{embed:page:glossary|Label}}         → navigates to any page
+//   {{embed:article:505-...|Label}}        → opens a Library lesson
 //   {{link:explorer:PACS.008|pacs.008}}   → inline link variant
+//   {{flow:Title|Stop ~ caption|-> label|Stop ~ caption}}
+//                                         → beat-4 business flow (flow-diagram.js)
 // ---------------------------------------------------------------------------
 
 const Articles = (function () {
@@ -82,6 +85,13 @@ const Articles = (function () {
                      title: 'Inspect ' + esc(arg),
                      sub: 'Open the full lesson node for this message — story, fields, and what breaks.' };
         }
+        if (kind === 'article' && arg) {
+            const art = (typeof getArticle === 'function') ? getArticle(arg) : null;
+            return { onclick: `openArticle('${esc(arg)}')`, kicker: 'Lesson',
+                     title: art ? esc(art.title) : ('Open ' + esc(arg)),
+                     sub: art && art.summary ? esc(art.summary)
+                          : 'Open this lesson in the Library.' };
+        }
         if (kind === 'page' && arg) {
             const labels = { journey: 'Open the Learning Journey', history: 'Open the History',
                              glossary: 'Open the Glossary', playground: 'Open the Playground' };
@@ -115,6 +125,41 @@ const Articles = (function () {
             return `<a class="md-inline-link" href="javascript:void(0)" onclick="${a.onclick}">${text}</a>`;
         });
         return body;
+    }
+
+    // ---- {{flow:...}} — beat-4 flow diagrams (Session 7.6) ----------------
+    // One per line: {{flow:Title|Stop ~ caption|-> arrow label|Stop ~ caption}}
+    // Rendered by the FlowDiagram module (assets/js/flow-diagram.js); animated
+    // by motion.js's living process-map engine via the data-flow attribute.
+    function expandFlows(body) {
+        return body.replace(/^[ \t]*\{\{flow:([^}]+)\}\}[ \t]*$/gm, (full, inner) => {
+            if (typeof FlowDiagram === 'undefined') return full;
+            const html = FlowDiagram.html(inner);
+            return html ? '\n' + html + '\n' : full;
+        });
+    }
+
+    // ---- {{check:...}} — knowledge checks (Session 7.5) -------------------
+    // One per line: {{check:Question?|Correct answer|Distractor|Distractor}}
+    // The FIRST option is the correct one; options are shuffled at render.
+    // Answers are recorded per lesson + question index in the Progress store.
+    function expandChecks(body, articleId) {
+        let qIndex = 0;
+        return body.replace(/^[ \t]*\{\{check:([^}]+)\}\}[ \t]*$/gm, (full, inner) => {
+            const parts = inner.split('|').map(s => s.trim()).filter(Boolean);
+            if (parts.length < 3) return full;
+            const q = parts[0];
+            const options = parts.slice(1).map((text, i) => ({ text, correct: i === 0 }));
+            for (let i = options.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [options[i], options[j]] = [options[j], options[i]];
+            }
+            const opts = options.map(o =>
+                `<button type="button" class="kc-opt" data-correct="${o.correct ? 1 : 0}" onclick="kcAnswer(this)">${esc(o.text)}</button>`
+            ).join('');
+            const idx = qIndex++;
+            return `\n<div class="kc-card" data-lesson="${esc(articleId)}" data-q="${idx}"><div class="kc-kicker">Knowledge check</div><p class="kc-q">${esc(q)}</p><div class="kc-options">${opts}</div><p class="kc-result" role="status"></p></div>\n`;
+        });
     }
 
     // ---- marked.js (with a tiny offline fallback) -------------------------
@@ -166,7 +211,7 @@ const Articles = (function () {
         if (!res.ok) throw new Error('Could not load ' + entry.file + ' (' + res.status + ')');
         const raw = await res.text();
         const { meta, body } = splitFrontmatter(raw);
-        const html = toHtml(expandEmbeds(body));
+        const html = toHtml(expandChecks(expandFlows(expandEmbeds(body)), id));
         cache[id] = { entry, meta, html };
         return cache[id];
     }
@@ -202,20 +247,23 @@ const Articles = (function () {
                     deep dives (300), and out to the exceptions that break payments in the real world (400).
                 </p>
             </div>
+            ${progressNote()}
             ${sections}`;
     }
 
     function cardHtml(a) {
         const draft = a.status === 'draft';
+        const learned = (typeof Progress !== 'undefined') && Progress.isLearned(a.id);
         const tags = (a.tags || []).slice(0, 3)
             .map(t => `<span class="learn-tag">${esc(t)}</span>`).join('');
         return `
-            <article class="learn-card${draft ? ' is-draft' : ''}" role="button" tabindex="0"
+            <article class="learn-card${draft ? ' is-draft' : ''}${learned ? ' is-learned' : ''}" role="button" tabindex="0"
                 onclick="openArticle('${a.id}')"
                 onkeydown="if(event.key==='Enter'){openArticle('${a.id}')}">
                 <div class="learn-card-top">
                     <span class="learn-card-num">${a.num}</span>
                     ${draft ? '<span class="learn-card-status">Draft</span>'
+                            : learned ? '<span class="learn-card-done"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Learned</span>'
                             : '<span class="learn-card-min">' + a.minutes + ' min read</span>'}
                 </div>
                 <h4 class="learn-card-title">${esc(a.title)}</h4>
@@ -274,8 +322,31 @@ const Articles = (function () {
 
                 <div class="md-body">${html}</div>
                 ${earned}
+                ${learnedRowHtml(entry.id)}
                 ${relatedHtml}
             </article>`;
+    }
+
+    // ---- "Mark as learned" (Session 7.5) ----------------------------------
+    function learnedRowHtml(id) {
+        const learned = (typeof Progress !== 'undefined') && Progress.isLearned(id);
+        return `
+            <div class="article-learned-row">
+                <button type="button" class="learned-toggle${learned ? ' is-learned' : ''}" onclick="toggleLearned('${id}', this)" aria-pressed="${learned}">
+                    <span class="learned-tick" aria-hidden="true"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                    <span class="learned-label">${learned ? 'Learned' : 'Mark as learned'}</span>
+                </button>
+                <span class="learned-hint">${learned ? 'Saved — this lesson shows as learned in the Library.' : 'Track your progress — saved on this device.'}</span>
+            </div>`;
+    }
+
+    // ---- Library progress note (Session 7.5) ------------------------------
+    function progressNote() {
+        if (typeof Progress === 'undefined' || typeof ACADEMY_TOC === 'undefined') return '';
+        const n = Progress.learnedCount();
+        if (!n) return '';
+        const total = ACADEMY_TOC.length;
+        return `<div class="learn-progress" data-reveal="fade"><span class="learn-progress-count">${n} of ${total}</span> lessons marked learned</div>`;
     }
 
     return {
@@ -323,5 +394,44 @@ async function openArticle(id) {
             <p>${(e && e.message) ? e.message : 'Unknown error.'}</p>
             <button class="article-back" onclick="navigate('library')">← Back to the Library</button>
         </div></div>`;
+    }
+}
+
+// ---- Knowledge check + learned toggle handlers (Session 7.5) --------------
+function kcAnswer(btn) {
+    const card = btn.closest('.kc-card');
+    if (!card || card.classList.contains('is-answered')) return;
+    card.classList.add('is-answered');
+    const correct = btn.getAttribute('data-correct') === '1';
+    btn.classList.add(correct ? 'is-right' : 'is-wrong');
+    card.querySelectorAll('.kc-opt').forEach(b => {
+        b.disabled = true;
+        if (b.getAttribute('data-correct') === '1') b.classList.add('is-answer');
+    });
+    const result = card.querySelector('.kc-result');
+    if (result) {
+        result.textContent = correct
+            ? 'Correct.'
+            : 'Not quite — the highlighted answer is the right one.';
+        result.classList.add(correct ? 'is-right' : 'is-wrong');
+    }
+    if (typeof Progress !== 'undefined') {
+        Progress.recordCheck(card.getAttribute('data-lesson'), Number(card.getAttribute('data-q')), correct);
+    }
+}
+
+function toggleLearned(id, btn) {
+    if (typeof Progress === 'undefined') return;
+    const next = !Progress.isLearned(id);
+    Progress.setLearned(id, next);
+    btn.classList.toggle('is-learned', next);
+    btn.setAttribute('aria-pressed', String(next));
+    const label = btn.querySelector('.learned-label');
+    if (label) label.textContent = next ? 'Learned' : 'Mark as learned';
+    const hint = btn.parentElement && btn.parentElement.querySelector('.learned-hint');
+    if (hint) {
+        hint.textContent = next
+            ? 'Saved — this lesson shows as learned in the Library.'
+            : 'Track your progress — saved on this device.';
     }
 }
